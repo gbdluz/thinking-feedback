@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h3>{{student.first_name}} {{student.last_name}}</h3>
+    <h5>{{ stage }}</h5>
+    {% for topic in topic_list %}
+        <li><a href = '.{{ topic.get_absolute_url }}'>{{ topic.title }}</a></li>
+    {% endfor %}
+{% endblock %}
+

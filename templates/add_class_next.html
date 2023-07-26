@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>What are the names of the students in {{ name }}? </h2>
+    <form method="POST", action=".">{% csrf_token %}
+        <table>
+            {% for idx in range_ %}
+                <tr>
+                    <td><input type="text" name={{idx}}.first_name placeholder="First name" class="form-control"></td>
+                    <td><input type="text" name={{idx}}.last_name placeholder="Last name" class="form-control"></td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br>
+        <input type="submit" value="OK">
+    </form> 
+
+{% endblock %}

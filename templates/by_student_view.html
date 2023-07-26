@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Do you want to update? <a href="./update/">Yes</a></h2>
+    <br>
+    <style>
+        table, th, td {
+        border:1px solid black;
+        }
+        th {text-align: center}
+
+    </style>
+    <h3>{{ student.first_name }} {{ student.last_name }}</h3>
+    <h4>{{ topic }} </h4>
+    <table style="width:100%" >
+        <tr>
+            <th width="25%"></th>
+            <th width="25%">Chill</th>
+            <th width="25%">Medium</th>
+            <th>Challenge</th>
+        </tr>
+        {% for skill, skill_grades in grades.items %}
+        <tr>
+            <td>{{ skill.title }}</td>
+            {% for level, level_grades in skill_grades.items %}
+                <td>
+                    {% for grade in level_grades %}
+                        {% if grade == 'tick' %}
+                            ✓
+                        {% elif grade == 'cross' %}
+                            ☓
+                        {% else %}
+                            {{grade}}
+                        {% endif %}
+                    {% endfor %}
+                </td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+        
+    </table>
+    <br><br>
+{% endblock %}

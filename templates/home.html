@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    
+    {% for topic in topic_list %}
+        <li><a href = '{{ topic.get_absolute_url }}'>{{ topic.title }}</a></li>
+    {% endfor %}
+    <br>
+    <p><a href = 'add/'>Add a new topic</a></p>
+{% endblock %}
+

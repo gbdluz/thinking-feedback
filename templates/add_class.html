@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Adding a Class</h2>
+    <form method="POST", action="">{% csrf_token %}
+        <table>
+            <tr>
+                <td>Class name:</td>
+                <td>
+                    <input type="text" name="stage_name">
+                </td>  
+            </tr>
+            <tr>
+                <td>How many students are there?</td>
+                <td><input type="number" name="size"></td>
+            </tr>
+        </table>
+        
+        <input type="submit" value="OK">
+    </form>   
+
+{% endblock %}

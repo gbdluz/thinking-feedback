@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1> {{ object.title }} </h1>
+    <p><a href = '{{ object.get_update_url }}'>Edit topic</a><br>
+        <a href = '{{ object.get_delete_url}}'>Delete topic</a></p>
+    {% for skill in skill_list %}
+        <li><a href = '{{ skill.get_absolute_url }}'>{{ skill.title }}</a></li>
+    {% endfor %}
+    {% if empty %}
+        Oh no! It seems that you have no skills in this topic currently.<br>
+    {% endif %}
+    <br>
+    <p><a href = '{{ object.get_add_skill_url }}'>Add a new skill</a></p>
+{% endblock %}

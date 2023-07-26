@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% for stage, topic_stage in topics.items %}
+    <h2>{{ stage }}</h2>
+    {% for topic in topic_stage %}    
+        <li><a href='{{ topic.get_absolute_url }}'>{{ topic.title }}</a></li>
+    {% endfor %}
+
+{% endfor %}
+{% if empty %}
+    Oh! It seems that you need to add classes ('Your classes' section) to be able to add new topics.<br>
+{% endif %}
+<br>
+<p><a href = '/add'>Add a new topic</a></p>
+
+
+{% endblock %}

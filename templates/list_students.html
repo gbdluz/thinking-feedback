@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+    Your classes are the following:<br><br> 
+    <table>
+        {% for stage, students in students.items %}
+            <tr>
+                <!-- <td></td> -->
+                    <td colspan="2">
+                        <h3>{{stage}}</h3>
+                    </td>
+                <td></td>
+            </tr>
+            <tr>
+                <td></td>
+                <th>Name</th>
+                <th>Username</th>
+            </tr>
+            {% for student in students %}
+                <tr></tr>
+                <td><li></td>
+                    <td>{{ student.first_name }} {{ student.last_name }},</td>
+                    <td>{{ student.username }}</td>
+                </li>
+            {% endfor %}
+            <!-- <br> -->
+            <tr>
+                <td colspan="3">
+                    <a href="{{ stage.get_passwords_url }}">View students' passwords</a>
+                    <br><br>
+                </td>
+            </tr>
+        {% endfor %}
+        {% if empty %}
+            Oh! It seems that you have no classes!
+        {% endif %}
+    </table>
+    <a href="/your_classes/add">Add a class</a>
+    <br><br>
+
+{% endblock %}

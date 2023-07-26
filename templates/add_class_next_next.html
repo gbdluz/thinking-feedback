@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h3>These are the usernames and passwords of your students:</h3>
+    <table>
+        <tr>
+            <td>Name</td>
+            <td>Username</td>
+            <td>Password</td>
+        </tr>
+        {% for key, val in passwords.items %}
+            <tr>
+                <td>{{ key.first_name }} {{ key.last_name }}:</td>
+                <td>{{ key.username }}</td>
+                <td>{{ val }}</td>
+            </tr>
+
+        {% endfor %}
+    </table>
+
+{% endblock %}

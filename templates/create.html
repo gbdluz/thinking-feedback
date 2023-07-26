@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1> Current topics </h1>
+{% for topic in topic_list %}
+    <li>{{ topic.title }}</li>
+{% endfor %}
+
+Do you want to add another one?
+<form method = 'POST' action = '.'>{% csrf_token %}
+    {{ form.as_p }}
+    <button type = 'submit'>Send</button>
+</form>
+
+{% endblock %}

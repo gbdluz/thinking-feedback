@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+    {% if request.user.is_staff %}
+        In the navigation bar above, 
+        you can modify grades of your students both 
+        by first choosing the topic and the skill (''By subject'' section)
+        and by first choosing a student (''By student'').
+    {% endif %}
+{% endblock %}
+
