@@ -10,22 +10,40 @@
         <td></td>
         <th>Name</th>
         <th>Username</th>
-        <td></td>
+        <td width="22%"></td>
+        <td width="25%"></td>
     </tr>
     {% for student in students %}
         <tr></tr>
         <td><li></td>
             <td>{{ student.first_name }} {{ student.last_name }},</td>
             <td>{{ student.username }}</td>
-            <td>Edit student</td>
+            <td>
+                <a href="./{{ student.pk }}">
+                    Edit student
+                </a>
+            </td>
+            <td>
+                <a href="./{{ student.pk }}/delete">
+                    Delete student
+                </a>
+            </td>
         </li>
     {% endfor %}
-    <tr><td colspan="4"></td></tr>
+    <tr><td colspan="5"></td></tr>
     <tr>
-        <td colspan="4">Add a student</td>
+        <td colspan="5">
+            <a href="./add">
+                Add a student
+            </a>
+        </td>
     </tr>
     <tr>
-        <td colspan="4">Delete class</td>
+        <td colspan="5">
+            <a href="./delete">
+                Delete class
+            </a>
+        </td>
     </tr>
     
     

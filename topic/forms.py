@@ -26,6 +26,17 @@ class StageEditForm(forms.ModelForm):
         model = Stage
         fields = ['title']
 
+class StudentForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['first_name', 'last_name']
+
+    def __init__(self, *args, **kwargs):
+        super(StudentForm, self).__init__(*args, **kwargs)
+
+        self.fields['first_name'].widget.attrs['class'] = 'form-control'
+        self.fields['last_name'].widget.attrs['class'] = 'form-control'
+        
 
 class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={

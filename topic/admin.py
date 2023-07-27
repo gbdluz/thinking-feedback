@@ -18,6 +18,7 @@ class UserAdmin(admin.ModelAdmin):
     fields = ['username', 'first_name', 'last_name', 'email', 'password', 'is_active', 'is_staff', 'is_superuser']
     inlines = [StageInline]
 
+
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)
 admin.site.register(Grade)

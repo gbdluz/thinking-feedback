@@ -13,7 +13,7 @@ from django import forms
 
 # Create your views here.
 from .models import Topic, Skill, Grade, Stage, Your_Stage, Initial_Password
-from .forms import TopicModelForm, SkillModelForm, SignUpForm, PasswordChangingForm, PasswordSettingForm, PasswordResettingForm, UpdateForm, StageEditForm
+from .forms import TopicModelForm, SkillModelForm, SignUpForm, PasswordChangingForm, PasswordSettingForm, PasswordResettingForm, UpdateForm, StageEditForm, StudentForm
 from thinking_feedback.views import home_page
 
 context = {}
@@ -261,10 +261,73 @@ def edit_class_name(request, pk):
     if form.is_valid():
         form.save()
         return redirect('/your_classes')
-    template_name = 'edit_class_name.html'
+    template_name = 'form.html'
     context = {'form': form}
     return render(request, template_name, context)
 
+@staff_member_required
+def edit_student(request, pk1, pk2):
+    stage = get_object_or_404(Stage, pk=pk1, teacher=request.user)
+    student = get_object_or_404(User, pk=pk2)
+    form = StudentForm(request.POST or None, instance=student)
+    if form.is_valid():
+        form.save()
+        return redirect('/your_classes')
+    template_name = 'form.html'
+    context = {'form': form}
+    return render(request, template_name, context)
+
+@staff_member_required
+def delete_student(request, pk1, pk2):
+    stage = get_object_or_404(Stage, pk=pk1, teacher=request.user)
+    student = get_object_or_404(User, pk=pk2)
+    if request.method == "POST":
+        student.delete()
+        return redirect('/your_classes')
+    template_name = 'delete_student.html'
+    context = {'stage': stage, 'student': student}
+    return render(request, template_name, context)
+
+@staff_member_required
+def add_student(request, pk):
+    stage = get_object_or_404(Stage, pk=pk, teacher=request.user)
+    form = StudentForm(request.POST or None)
+    if form.is_valid():
+        student = form.save(commit=False)
+        first_name = student.first_name
+        last_name = student.last_name
+        username = (first_name[:min(3, len(first_name))].strip() + last_name[:min(4, len(last_name))].strip()).lower()
+        student.username = username
+        counter = 1
+        while User.objects.filter(username=username):
+            username = first_name + str(counter)
+            counter += 1
+        student.save()
+        password = User.objects.make_random_password()
+        student.set_password(password)
+        student.save()
+        your_stage = Your_Stage()
+        your_stage.user = student
+        your_stage.role = 'STUDENT'
+        your_stage.stage = stage
+        your_stage.save()
+        student.your_stage = your_stage
+        student.save()
+        Initial_Password.objects.create(student=student, password=password)
+        return redirect('/your_classes')
+    context = {'stage': stage, 'form': form}
+    template_name = 'add_student.html'
+    return render(request, template_name, context)
+
+@staff_member_required
+def delete_class(request, pk):
+    stage = get_object_or_404(Stage, pk=pk, teacher=request.user)
+    if request.method == "POST":
+        stage.delete()
+        return redirect('/your_classes')
+    template_name = 'delete_class.html'
+    context = {'stage': stage}
+    return render(request, template_name, context)
 
 @staff_member_required
 def add_class(request):
