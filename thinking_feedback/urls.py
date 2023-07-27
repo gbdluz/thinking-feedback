@@ -19,10 +19,14 @@ from django.urls import path, re_path, include
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.auth import views as auth_views
 
-from topic.forms import PasswordResettingForm
+from users.views import (
+    PasswordsChangeView,
+    password_success,
+    PasswordSettingView,
+    PasswordResettingView,
+)
 
 from topic.views import (
-    topic_list_view,
     topic_detail_view,
     add_topic,
     add_skill,
@@ -46,29 +50,26 @@ from topic.views import (
     by_student_view,
     by_student_update,
     by_subject,
-    register,
-    update_user,
+    # register,
+    # update_user,
     add_class,
     add_class_next,
-    PasswordsChangeView,
-    password_success,
-    PasswordSettingView,
-    PasswordResettingView,
 )
 
-from .views import (
-    home_page,
-    login_page,
-    logout_page,
-)
+# from .views import (
+#     home_page,
+#     login_page,
+#     logout_page,
+# )
 
 urlpatterns = [
+    path('', include('users.urls')),
     path('admin/', admin.site.urls),
-    path('', home_page, name='home'),
-    path('register/', register),
-    path('update_user/', update_user),
-    path('password/', PasswordsChangeView.as_view(template_name='form.html')),
-    path('password/success/', password_success, name='password_success'),
+    # path('', home_page, name='home'),
+    # path('register/', register),
+    # path('update_user/', update_user),
+    # path('password/', PasswordsChangeView.as_view(template_name='form.html')),
+    # path('password/success/', password_success, name='password_success'),
     path('login/', include("django.contrib.auth.urls")),
     path('your_classes/', list_students),
     path('your_classes/<int:pk>/passwords/', view_passwords),
@@ -80,8 +81,8 @@ urlpatterns = [
     path('your_classes/<int:pk>/edit/delete/', delete_class),
     path('your_classes/add/', add_class),
     path('your_classes/add/next/<int:pk>/', add_class_next),
-    path('login/', login_page),
-    path('logout/', logout_page),
+    # path('login/', login_page),
+    # path('logout/', logout_page),
     path('add/', add_topic),
     path('topic/', by_subject),
     path('topic/<str:slug>/', topic_detail_view),  
@@ -98,18 +99,18 @@ urlpatterns = [
     path('by_student/<int:pk>/topic/<str:slug>/', by_student_view),    
     path('by_student/<int:pk>/topic/<str:slug>/update/', by_student_update),
 
-    path('reset_password/', 
-         auth_views.PasswordResetView.as_view(template_name="password_reset.html", form_class=PasswordResettingForm), 
-         name="reset_password"),
-    path('reset_password_sent/', 
-         auth_views.PasswordResetDoneView.as_view(template_name="password_reset_sent.html"), 
-         name="password_reset_done"),
-    path('reset/<uidb64>/<token>/', 
-         PasswordSettingView.as_view(template_name="password_reset_form.html"), 
-         name="password_reset_confirm"),
-    path('reset_password_complete/', 
-         auth_views.PasswordResetCompleteView.as_view(template_name="password_reset_done.html"), 
-         name="password_reset_complete")
+    # path('reset_password/', 
+    #      auth_views.PasswordResetView.as_view(template_name="password_reset.html", form_class=PasswordResettingForm), 
+    #      name="reset_password"),
+    # path('reset_password_sent/', 
+    #      auth_views.PasswordResetDoneView.as_view(template_name="password_reset_sent.html"), 
+    #      name="password_reset_done"),
+    # path('reset/<uidb64>/<token>/', 
+    #      PasswordSettingView.as_view(template_name="password_reset_form.html"), 
+    #      name="password_reset_confirm"),
+    # path('reset_password_complete/', 
+    #      auth_views.    PasswordResetCompleteView.as_view(template_name="password_reset_done.html"), 
+    #      name="password_reset_complete")
 ]
 
 urlpatterns += staticfiles_urlpatterns()

@@ -5,79 +5,36 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, get_user_model
 from django.contrib.auth.models import User
-from django.contrib.auth.views import PasswordChangeView, PasswordResetConfirmView, PasswordResetDoneView
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm, PasswordResetForm
-from django.urls import reverse_lazy
 from django import forms
-
+# from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm, PasswordResetForm
 
 # Create your views here.
 from .models import Topic, Skill, Grade, Stage, Your_Stage, Initial_Password
-from .forms import TopicModelForm, SkillModelForm, SignUpForm, PasswordChangingForm, PasswordSettingForm, PasswordResettingForm, UpdateForm, StageEditForm, StudentForm
-from thinking_feedback.views import home_page
+from .forms import TopicModelForm, SignUpForm, SkillModelForm, UpdateForm, StageEditForm, StudentForm
+from users.forms import PasswordChangingForm, PasswordSettingForm, PasswordResettingForm
+from users.views import home_page
 
 context = {}
 
-class PasswordsChangeView(PasswordChangeView):
-    form_class = PasswordChangingForm
-    success_url = reverse_lazy('password_success')
-
-@login_required
-def password_success(request):
-    messages.success(request, message="Your password has been changed.")
-    return redirect('/')
-
-class PasswordResettingView(PasswordResetDoneView):
-    form_class = PasswordResettingForm
-    success_url = reverse_lazy('password_reset_done')
 
 
-class PasswordSettingView(PasswordResetConfirmView):
-    form_class = PasswordSettingForm
-    success_url = reverse_lazy('password_reset_complete')
 
 
-def register(request):
-    form = SignUpForm(request.POST or None)
-    if form.is_valid():
-        obj = form.save(commit=False)
-        obj.is_staff = True
-        obj.save()
-        stage = Your_Stage()
-        stage.user = obj
-        stage.role = 'TEACHER'
-        stage.save()
-        obj.your_stage = stage 
-        obj.save()
-        login(request, obj)
-        return redirect('/')
-    template_name = 'form.html'
-    context = {'title': 'Register', 'form': form}
-    return render(request, template_name, context)
 
-@login_required
-def update_user(request):
-    user = request.user
-    form = UpdateForm(request.POST or None, instance=user)
-    if form.is_valid():
-        obj = form.save(commit=False)
-        user.username = obj.username
-        user.password = obj.password
-        user.save()
-        login(request, user)
-        return redirect('/')
-    template_name = 'update_user.html'
-    context = {'user': user, 'title': 'Update your details', 'form': form}
-    return render(request, template_name, context)
-
-
-@staff_member_required
-def topic_list_view(request):
-    qs = Topic.objects.filter(teacher=request.user)
-
-    template_name = 'topic_list.html'
-    context = {'object_list': qs, 'topic_list': qs}
-    return render(request, template_name, context)
+# @login_required
+# def update_user(request):
+#     user = request.user
+#     form = UpdateForm(request.POST or None, instance=user)
+#     if form.is_valid():
+#         obj = form.save(commit=False)
+#         user.username = obj.username
+#         user.password = obj.password
+#         user.save()
+#         login(request, user)
+#         return redirect('/')
+#     template_name = 'update_user.html'
+#     context = {'user': user, 'title': 'Update your details', 'form': form}
+#     return render(request, template_name, context)
 
 
 @staff_member_required

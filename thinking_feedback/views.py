@@ -11,35 +11,11 @@ from topic.models import Topic
 qs = Topic.objects.all()
 
 
-def home_page(request):
-    return render(request, 'title.html', {'title': 'Welcome to ThinkingFeedback!'})
+
         
 
 
-def login_page(request):
-    if request.user.is_authenticated:
-        return redirect("/")
-    else:
-        
-        template_name = "login.html"
-        context = {'topic_list': qs}
-        if request.method == "POST":
-            username = request.POST["username"]
-            password = request.POST["password"]
-            user = authenticate(request, username=username, password=password)
-            if user is not None:
-                login(request, user)
-                return redirect("/")
-            else:
-                messages.success(request, message="There was an error logging in. Try again")
-                return redirect("/login")
-        else:
-            return render(request, template_name, context)
-    
-def logout_page(request):
-    logout(request)
-    messages.success(request, message="You were logged out")
-    return redirect('/')
+
 
 
 
