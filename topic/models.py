@@ -68,9 +68,9 @@ class Topic(models.Model):
         return self.title
 
 class Skill(models.Model):
-    title       = models.CharField(max_length=120)
-    slug        = models.SlugField(unique = True)
-    topic       = models.ForeignKey(Topic, default = 1, on_delete = models.CASCADE)
+    title = models.CharField(max_length=120)
+    slug = models.SlugField(unique = True)
+    topic = models.ForeignKey(Topic, default = 1, on_delete = models.CASCADE)
 
     def get_absolute_url(self):
         return f"/topic/{self.topic.slug}/skill/{self.slug}"
@@ -94,9 +94,13 @@ class Grade(models.Model):
         ("nb", "nb")
     )
     student = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
-    skill   = models.ForeignKey(Skill, default=1, on_delete=models.CASCADE)
-    value   = models.CharField(max_length=5, choices=CHOICES, default="nb")
-    level   = models.CharField(max_length=1, choices=(('1','Chill'), ('2','Medium'), ('3', 'Challenge')), default=1)
+    skill = models.ForeignKey(Skill, default=1, on_delete=models.CASCADE)
+    value = models.CharField(max_length=5, choices=CHOICES, default="nb")
+    level = models.CharField(max_length=1, choices=(('1','Chill'), ('2','Medium'), ('3', 'Challenge')), default=1)
+    publish_date = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{ self.publish_date.strftime('%d-%m-%Y') }"
 
 
 

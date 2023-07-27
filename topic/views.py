@@ -419,7 +419,7 @@ def student_detail(request, slug):
             grades[skill][level] = []
             temp = Grade.objects.filter(student=student, skill=skill, level=level)
             for grade in temp:
-                grades[skill][level].append(grade.value)
+                grades[skill][level].append(grade)
     print(grades)
     context['grades'] = grades
     template_name   = 'student_detail.html'
@@ -471,7 +471,7 @@ def by_student_view(request, pk, slug):
             grades[skill][level] = []
             temp = Grade.objects.filter(student=student, skill=skill, level=level)
             for grade in temp:
-                grades[skill][level].append(grade.value)
+                grades[skill][level].append(grade)
     print(grades)
     context['grades'] = grades
     template_name = "by_student_view.html"

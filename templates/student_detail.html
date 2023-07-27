@@ -22,13 +22,15 @@
             {% for level, level_grades in skill_grades.items %}
                 <td>
                     {% for grade in level_grades %}
-                        {% if grade == 'tick' %}
-                            ✓
-                        {% elif grade == 'cross' %}
-                            ☓
-                        {% else %}
-                            {{grade}}
-                        {% endif %}
+                        <div style="float:left; margin:2px" title="{{ grade }}">
+                            {% if grade.value == 'tick' %}
+                                ✓
+                            {% elif grade.value == 'cross' %}
+                                ☓
+                            {% else %}
+                                {{ grade.value }}
+                            {% endif %}
+                        </div>
                     {% endfor %}
                 </td>
             {% endfor %}
