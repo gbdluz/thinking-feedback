@@ -12,7 +12,7 @@ from django import forms
 
 
 # Create your views here.
-from .models import Topic, Skill, Grade, Stage, Your_Stage
+from .models import Topic, Skill, Grade, Stage, Your_Stage, Initial_Password
 from .forms import TopicModelForm, SkillModelForm, SignUpForm, PasswordChangingForm, PasswordSettingForm, PasswordResettingForm, UpdateForm
 from thinking_feedback.views import home_page
 
@@ -237,11 +237,19 @@ def list_students(request):
 
 @staff_member_required
 def view_passwords(request, pk):
-    stage = get_object_or_404(Stage, pk=pk, teacher=request.user)
-    qs = Your_Stage.objects.filter(stage=stage)
-    qs2 = User.objects.filter(your_stage__in=qs)
-
-    context = {'stage': stage, 'students': qs2}
+    stage = Stage.objects.get(pk=pk, teacher=request.user)
+    your_stages = Your_Stage.objects.filter(stage=stage)
+    students = User.objects.filter(your_stage__in=your_stages)
+    passwords = Initial_Password.objects.filter(student__in=students)
+    # stage = get_object_or_404(Stage, pk=pk, teacher=request.user)
+    # passwords = stage.passwords
+    # qs = Your_Stage.objects.filter(stage=stage)
+    # qs2 = User.objects.filter(your_stage__in=qs)
+    # print(stage, stage.teacher, stage.passwords
+    print(stage)
+    print(students)
+    print(passwords)
+    context = {'stage': stage, 'passwords': passwords} #, 'passwords': passwords
     template_name = 'view_passwords.html'
     return render(request, template_name, context)
 
@@ -274,12 +282,11 @@ def add_class_next(request, pk):
         context = {'size': stage.number, 'name': stage.title, 'range_': range_}
         template_name = 'add_class_next.html'
         if request.POST:
-            # print(request.POST)
             passwords = {}
             for idx in range_:
                 first_name = request.POST[str(idx)+'.first_name'].strip()
                 last_name = request.POST[str(idx)+'.last_name'].strip()
-                username = (first_name + last_name[0]).lower()
+                username = (first_name[:min(3, len(first_name))].strip() + last_name[:min(4, len(last_name))].strip()).lower()
                 counter = 1
                 while User.objects.filter(username=username):
                     username = first_name + str(counter)
@@ -297,6 +304,7 @@ def add_class_next(request, pk):
                 your_stage.save()
                 student.your_stage = your_stage
                 student.save()
+                Initial_Password.objects.create(student=student, password=password)
             stage.passwords = passwords
             # print(stage, stage.passwords)
             return add_class_next_next(request, passwords)

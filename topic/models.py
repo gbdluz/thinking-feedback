@@ -9,13 +9,19 @@ from django.db.models.fields.related import RelatedField
 User = settings.AUTH_USER_MODEL
 
 # Create your models here.
+
+class Initial_Password(models.Model):
+    student = models.ForeignKey(User, on_delete=models.CASCADE)
+    password = models.CharField(max_length=20)
     
+    def __str__(self):
+        return f"{ self.student.first_name } { self.student.last_name }"
 
 class Stage(models.Model):
     title   = models.CharField(max_length=20)
     teacher = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
     number  = models.IntegerField(null=True, blank=True)
-    passwords = models.QuerySet()
+    
     def __str__(self):
         return self.title
     
