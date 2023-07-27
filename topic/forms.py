@@ -21,6 +21,11 @@ class SkillModelForm(forms.ModelForm):
         model = Skill
         fields = ['title', 'slug']
 
+class StageEditForm(forms.ModelForm):
+    class Meta:
+        model = Stage
+        fields = ['title']
+
 
 class SignUpForm(UserCreationForm):
     first_name = forms.CharField(max_length=100, widget=forms.TextInput(attrs={

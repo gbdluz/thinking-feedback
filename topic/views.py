@@ -13,7 +13,7 @@ from django import forms
 
 # Create your views here.
 from .models import Topic, Skill, Grade, Stage, Your_Stage, Initial_Password
-from .forms import TopicModelForm, SkillModelForm, SignUpForm, PasswordChangingForm, PasswordSettingForm, PasswordResettingForm, UpdateForm
+from .forms import TopicModelForm, SkillModelForm, SignUpForm, PasswordChangingForm, PasswordSettingForm, PasswordResettingForm, UpdateForm, StageEditForm
 from thinking_feedback.views import home_page
 
 context = {}
@@ -241,18 +241,29 @@ def view_passwords(request, pk):
     your_stages = Your_Stage.objects.filter(stage=stage)
     students = User.objects.filter(your_stage__in=your_stages)
     passwords = Initial_Password.objects.filter(student__in=students)
-    # stage = get_object_or_404(Stage, pk=pk, teacher=request.user)
-    # passwords = stage.passwords
-    # qs = Your_Stage.objects.filter(stage=stage)
-    # qs2 = User.objects.filter(your_stage__in=qs)
-    # print(stage, stage.teacher, stage.passwords
-    print(stage)
-    print(students)
-    print(passwords)
-    context = {'stage': stage, 'passwords': passwords} #, 'passwords': passwords
+    context = {'stage': stage, 'passwords': passwords} 
     template_name = 'view_passwords.html'
     return render(request, template_name, context)
 
+@staff_member_required
+def edit_class(request, pk):
+    stage = get_object_or_404(Stage, pk=pk, teacher=request.user)
+    your_stages = Your_Stage.objects.filter(stage=stage)
+    students = User.objects.filter(your_stage__in=your_stages)
+    template_name = 'edit_class.html'
+    context = {'stage': stage, 'students': students}
+    return render(request, template_name, context)
+
+@staff_member_required
+def edit_class_name(request, pk):
+    stage = get_object_or_404(Stage, pk=pk, teacher=request.user)
+    form = StageEditForm(request.POST or None, instance=stage)
+    if form.is_valid():
+        form.save()
+        return redirect('/your_classes')
+    template_name = 'edit_class_name.html'
+    context = {'form': form}
+    return render(request, template_name, context)
 
 
 @staff_member_required

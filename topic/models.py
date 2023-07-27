@@ -31,6 +31,12 @@ class Stage(models.Model):
     def get_passwords_url(self):
         return f"/your_classes/{self.pk}/passwords/"
     
+    def get_edit_url(self):
+        return f"/your_classes/{self.pk}/edit"
+    
+    def get_edit_name_url(self):
+        return f"/your_classes/{self.pk}/edit/name"
+    
 
 class Your_Stage(models.Model):
     user  = models.OneToOneField(User, on_delete=models.CASCADE)
