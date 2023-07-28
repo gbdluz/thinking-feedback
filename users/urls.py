@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import path, include
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.auth import views as auth_views
 
@@ -17,6 +17,7 @@ from .forms import PasswordResettingForm
 
 urlpatterns = [
     path('', home_page, name='home'),
+    path('login/', include("django.contrib.auth.urls")),
     path('login/', login_page),
     path('logout/', logout_page),
     path('register/', register),
