@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h2>Do you want to add grades? <a href="./update/">Yes</a></h2>
-    <br>
-    <h2>Do you want to edit latest grades? <a href="./edit/">Yes</a></h2>
-    <br>
     <style>
         table, th, td {
         border:1px solid black;
@@ -14,6 +10,7 @@
     </style>
     <h3>{{ student.first_name }} {{ student.last_name }}</h3>
     <h4>{{ topic }} </h4>
+    <form method="POST", action=".">{% csrf_token %}
     <table style="width:100%" >
         <tr>
             <th width="25%"></th>
@@ -23,10 +20,13 @@
         </tr>
         {% for skill, skill_grades in grades.items %}
         <tr>
-            <td>{{ skill.title }}</td>
+            <td>{{ skill.title }}
+                <!-- {{ skill_grades.values }} -->
+            </td>
+        
             {% for level, level_grades in skill_grades.items %}
                 <td>
-                    {% for grade in level_grades %}
+                    {% for grade in level_grades.0 %}
                         <div style="float:left; margin:2px" title="{{ grade }}">
                             {% if grade.value == 'tick' %}
                                 ✓
@@ -37,11 +37,26 @@
                             {% endif %}
                         </div>
                     {% endfor %}
+                    
+                    {% if level_grades.1 != '' %}
+                        <select name={{skill.slug}}{{level}}>
+                                <option value="empty"></option>
+                                <option value="nb" {% if level_grades.1.value == 'nb' %}selected{% endif %}>nb</option> 
+                                <option value="tick"{% if level_grades.1.value == 'tick' %}selected{% endif %}>✓</option>
+                                <option value="cross"{% if level_grades.1.value == 'cross' %}selected{% endif %}>☓</option>
+                                <option value="G"{% if level_grades.1.value == 'G' %}selected{% endif %}>G</option>
+                                <option value="B"{% if level_grades.1.value == 'B' %}selected{% endif %}>B</option>                               
+                        </select>
+                    {% endif %}
                 </td>
+
             {% endfor %}
         </tr>
         {% endfor %}
         
     </table>
+    <br>
+    <input type="submit" value="OK">
+    </form> 
     <br><br>
 {% endblock %}

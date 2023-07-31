@@ -40,10 +40,6 @@ def by_student_view(request, pk, slug):
     obj         = get_object_or_404(Topic, slug = slug)
     skill_list  = Skill.objects.filter(topic = obj)
     context = {'skill_list': skill_list, 'slug': slug, 'student': student, 'topic': obj.title}
-    # context['skill_list'] = skill_list
-    # context['slug'] = slug
-    # context['student'] = student
-    # context['topic'] = obj.title
     grades  = {}
     student = User.objects.get(pk=pk)
     for skill in skill_list:   
@@ -53,7 +49,7 @@ def by_student_view(request, pk, slug):
             temp = Grade.objects.filter(student=student, skill=skill, level=level)
             for grade in temp:
                 grades[skill][level].append(grade)
-    print(grades)
+    # print(grades)
     context['grades'] = grades
     template_name = "by_student_view.html"
     return render(request, template_name, context)
@@ -67,9 +63,6 @@ def by_student_update(request, pk, slug):
         return redirect('/')
     skill_list  = Skill.objects.filter(topic=obj)
     context = {'student': student, 'skill_list': skill_list, 'topic': obj.title}
-    # context['student']         = student
-    # context['skill_list']   = skill_list
-    # context['topic']        = obj.title
     template_name = 'by_student_update.html'
     if request.POST:
         for key, value in request.POST.items():
@@ -80,4 +73,47 @@ def by_student_update(request, pk, slug):
                 grade = Grade(student=student, skill=skill, value=value, level=level)
                 grade.save()
         return redirect('..')
+    return render(request, template_name, context)
+
+@staff_member_required
+def by_student_edit(request, pk, slug):
+    student = User.objects.get(pk=pk)
+    stage = student.your_stage.stage
+    if stage.teacher != request.user:
+        return redirect('/')
+    obj = get_object_or_404(Topic, slug = slug)
+    skill_list  = Skill.objects.filter(topic = obj)
+    context = {'skill_list': skill_list, 'slug': slug, 'student': student, 'topic': obj.title}
+    grades = {}
+    student = User.objects.get(pk=pk)
+    for skill in skill_list:   
+        grades[skill] = {}
+        for level in (1,2,3):
+            temp_grades = []
+            temp = Grade.objects.filter(student=student, skill=skill, level=level)
+            for grade in temp:
+                temp_grades.append(grade)
+            if len(temp_grades) > 1: grades[skill][level] = (temp_grades[:-1], temp_grades[-1])
+            elif len(temp_grades) == 1: grades[skill][level] = ([], temp_grades[0])
+            else: grades[skill][level] = ([], '')
+
+    context['grades'] = grades
+    template_name = "by_student_edit.html"
+
+    if request.POST:
+        for key, value in request.POST.items():
+            if key != 'csrfmiddlewaretoken': 
+                skill_slug = key[:-1]
+                skill = Skill.objects.get(topic=obj, slug=skill_slug)
+                level = key[-1]
+                grade = Grade.objects.filter(student=student, skill=skill, level=level).last()
+                if value == 'empty':
+                    grade.delete()
+                elif grade.value != value:
+                    grade.value = value
+                    grade.save()
+        return redirect('..')
+
+
+
     return render(request, template_name, context)
