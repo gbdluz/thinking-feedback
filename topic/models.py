@@ -81,6 +81,12 @@ class Skill(models.Model):
     def get_delete_url(self):
         return f"/topic/{self.topic.slug}/skill/{self.slug}/delete"
     
+    def get_grade_edit_url(self):
+        return f"/topic/{self.topic.slug}/skill/{self.slug}/grade_edit"
+    
+    def get_grade_delete_url(self):
+        return f"/topic/{self.topic.slug}/skill/{self.slug}/grade_delete"
+
     def __str__(self):
         return self.title
     
