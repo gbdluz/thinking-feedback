@@ -49,43 +49,43 @@ class Your_Stage(models.Model):
 
 class Topic(models.Model):
     title   = models.CharField(max_length=120)
-    slug    = models.SlugField(unique = True)
+    # slug    = models.SlugField(unique = True)
     teacher = models.ForeignKey(User, on_delete=models.CASCADE)
     stage   = models.ForeignKey(Stage, on_delete=models.CASCADE)
     def get_absolute_url(self):
-        return f"/topic/{self.slug}"
+        return f"/topic/{self.pk}"
     
     def get_update_url(self):
-        return f"/topic/{self.slug}/edit/"
+        return f"/topic/{self.pk}/edit/"
     
     def get_add_skill_url(self):
-        return f"/topic/{self.slug}/add/"
+        return f"/topic/{self.pk}/add/"
     
     def get_delete_url(self):
-        return f"/topic/{self.slug}/delete/"
+        return f"/topic/{self.pk}/delete/"
     
     def __str__(self):
         return self.title
 
 class Skill(models.Model):
     title = models.CharField(max_length=120)
-    slug = models.SlugField(unique = True)
+    # slug = models.SlugField(unique = True)
     topic = models.ForeignKey(Topic, default = 1, on_delete = models.CASCADE)
 
     def get_absolute_url(self):
-        return f"/topic/{self.topic.slug}/skill/{self.slug}"
+        return f"/topic/{self.topic.pk}/skill/{self.pk}"
     
     def get_edit_url(self):
-        return f"/topic/{self.topic.slug}/skill/{self.slug}/edit"
+        return f"/topic/{self.topic.pk}/skill/{self.pk}/edit"
     
     def get_delete_url(self):
-        return f"/topic/{self.topic.slug}/skill/{self.slug}/delete"
+        return f"/topic/{self.topic.pk}/skill/{self.pk}/delete"
     
     def get_grade_edit_url(self):
-        return f"/topic/{self.topic.slug}/skill/{self.slug}/grade_edit"
+        return f"/topic/{self.topic.pk}/skill/{self.pk}/grade_edit"
     
     def get_grade_delete_url(self):
-        return f"/topic/{self.topic.slug}/skill/{self.slug}/grade_delete"
+        return f"/topic/{self.topic.pk}/skill/{self.pk}/grade_delete"
 
     def __str__(self):
         return self.title

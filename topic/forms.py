@@ -8,7 +8,7 @@ from .models import Topic, Skill, Stage
 class TopicModelForm(forms.ModelForm):
     class Meta:
         model = Topic
-        fields = ['title', 'slug', 'stage']
+        fields = ['title', 'stage'] #'slug', 
 
     def __init__(self, user, *args, **kwargs):
         super(TopicModelForm, self).__init__(*args, **kwargs)
@@ -19,7 +19,7 @@ class TopicModelForm(forms.ModelForm):
 class SkillModelForm(forms.ModelForm):
     class Meta:
         model = Skill
-        fields = ['title', 'slug']
+        fields = ['title'] #, 'slug'
 
 class StageEditForm(forms.ModelForm):
     class Meta:

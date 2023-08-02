@@ -11,7 +11,7 @@ from .views import (
 urlpatterns = [
     path('', by_student),
     path('<int:pk>/', by_student_pick_topic),
-    path('<int:pk>/topic/<str:slug>/', by_student_view),    
-    path('<int:pk>/topic/<str:slug>/update/', by_student_update),
-    path('<int:pk>/topic/<str:slug>/edit/', by_student_edit),
+    path('<int:pk1>/topic/<int:pk2>/', by_student_view),    
+    path('<int:pk1>/topic/<int:pk2>/update/', by_student_update),
+    path('<int:pk1>/topic/<int:pk2>/edit/', by_student_edit),
 ]

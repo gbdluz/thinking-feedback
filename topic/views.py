@@ -38,9 +38,9 @@ def by_subject(request):
     return render(request, template_name, context)
 
 @staff_member_required
-def topic_detail_view(request, slug):
-    stages  = Stage.objects.filter(teacher=request.user)
-    obj     = get_object_or_404(Topic, slug=slug, stage__in=stages)
+def topic_detail_view(request, pk):
+    stages = Stage.objects.filter(teacher=request.user)
+    obj = get_object_or_404(Topic, pk=pk, stage__in=stages)
 
     qs2 = Skill.objects.filter(topic = obj)
     template_name = 'topic_detail.html'
@@ -66,12 +66,12 @@ def add_topic(request):
     return render(request, template_name, context)
 
 @staff_member_required
-def add_skill(request, slug):
+def add_skill(request, pk):
     stages  = Stage.objects.filter(teacher=request.user)
     form    = SkillModelForm(request.POST or None)
     if form.is_valid():
         obj = form.save(commit = False)
-        topic = get_object_or_404(Topic, slug = slug, stage__in=stages)
+        topic = get_object_or_404(Topic, pk=pk, stage__in=stages)
         obj.topic = topic
         obj.save()
         return redirect('..')
@@ -80,10 +80,10 @@ def add_skill(request, slug):
     return render(request, template_name, context)
 
 @staff_member_required
-def update_topic(request, slug):
+def update_topic(request, pk):
     user = request.user
     stages  = Stage.objects.filter(teacher=request.user)
-    topic = get_object_or_404(Topic, slug=slug, stage__in=stages)
+    topic = get_object_or_404(Topic, pk=pk, stage__in=stages)
     form = TopicModelForm(user, request.POST or None, instance=topic)
     if form.is_valid():
         obj  = form.save(commit = False)
@@ -97,9 +97,9 @@ def update_topic(request, slug):
     return render(request, template_name, context)
 
 @staff_member_required
-def delete_topic(request, slug):
+def delete_topic(request, pk):
     stages  = Stage.objects.filter(teacher=request.user)
-    topic = get_object_or_404(Topic, slug=slug, stage__in=stages)
+    topic = get_object_or_404(Topic, pk=pk, stage__in=stages)
     if request.method == "POST":
         topic.delete()
         return redirect('../..')
@@ -109,10 +109,10 @@ def delete_topic(request, slug):
 
 
 @staff_member_required
-def skill_update(request, slug1, slug2):
+def skill_update(request, pk1, pk2):
     stages = Stage.objects.filter(teacher=request.user)
-    topic  = get_object_or_404(Topic, slug=slug1, stage__in=stages)
-    skill  = get_object_or_404(Skill, slug=slug2)
+    topic  = get_object_or_404(Topic, pk=pk1, stage__in=stages)
+    skill  = get_object_or_404(Skill, pk=pk2)
     stage  = topic.stage
     template_name = 'skill_update.html'
     std_stages = Your_Stage.objects.filter(stage=stage)
@@ -132,10 +132,10 @@ def skill_update(request, slug1, slug2):
     return render(request, template_name, context)
 
 @staff_member_required
-def skill_grade_edit(request, slug1, slug2):
+def skill_grade_edit(request, pk1, pk2):
     stages = Stage.objects.filter(teacher=request.user)
-    topic  = get_object_or_404(Topic, slug=slug1, stage__in=stages)
-    skill  = get_object_or_404(Skill, slug=slug2)
+    topic  = get_object_or_404(Topic, pk=pk1, stage__in=stages)
+    skill  = get_object_or_404(Skill, pk=pk2)
     context = {'topic': topic, 'skill': skill, 'title': 'Edit grades'}
     template_name = 'skill_grade_edit.html'
     
@@ -145,11 +145,11 @@ def skill_grade_edit(request, slug1, slug2):
     return render(request, template_name, context)
 
 @staff_member_required
-def skill_grade_edit_next(request, slug1, slug2, level):
+def skill_grade_edit_next(request, pk1, pk2, level):
     
     stages = Stage.objects.filter(teacher=request.user)
-    topic  = get_object_or_404(Topic, slug=slug1, stage__in=stages)
-    skill  = get_object_or_404(Skill, slug=slug2)
+    topic  = get_object_or_404(Topic, pk=pk1, stage__in=stages)
+    skill  = get_object_or_404(Skill, pk=pk2)
     context = {'topic': topic, 'skill': skill, 'level': 'Chill','title': 'Edit grades'}
     if int(level) == 2: 
         context['level'] = 'Medium'
@@ -190,10 +190,10 @@ def skill_grade_edit_next(request, slug1, slug2, level):
 
 
 @staff_member_required
-def skill_grade_delete(request, slug1, slug2):
+def skill_grade_delete(request, pk1, pk2):
     stages = Stage.objects.filter(teacher=request.user)
-    topic  = get_object_or_404(Topic, slug=slug1, stage__in=stages)
-    skill  = get_object_or_404(Skill, slug=slug2)
+    topic  = get_object_or_404(Topic, pk=pk1, stage__in=stages)
+    skill  = get_object_or_404(Skill, pk=pk2)
     context = {'topic': topic, 'skill': skill, 'title': 'Delete grades'}
     template_name = 'skill_grade_edit.html'
     
@@ -203,10 +203,10 @@ def skill_grade_delete(request, slug1, slug2):
     return render(request, template_name, context)
 
 @staff_member_required
-def skill_grade_delete_next(request, slug1, slug2, level):
+def skill_grade_delete_next(request, pk1, pk2, level):
     stages = Stage.objects.filter(teacher=request.user)
-    topic  = get_object_or_404(Topic, slug=slug1, stage__in=stages)
-    skill  = get_object_or_404(Skill, slug=slug2)
+    topic  = get_object_or_404(Topic, pk=pk1, stage__in=stages)
+    skill  = get_object_or_404(Skill, pk=pk2)
     context = {'topic': topic, 'skill': skill, 'level': 'Chill'}
     if int(level) == 2: 
         context['level'] = 'Medium'
@@ -239,27 +239,26 @@ def skill_grade_delete_next(request, slug1, slug2, level):
 
 
 @staff_member_required
-def skill_edit(request, slug1, slug2):
+def skill_edit(request, pk1, pk2):
     stages = Stage.objects.filter(teacher=request.user)
-    topic  = get_object_or_404(Topic, slug=slug1, stage__in=stages)
-    skill  = get_object_or_404(Skill, slug=slug2)
+    topic  = get_object_or_404(Topic, pk=pk1, stage__in=stages)
+    skill  = get_object_or_404(Skill, pk=pk2)
     form    = SkillModelForm(request.POST or None, instance=skill)
     if form.is_valid():
         obj = form.save(commit = False)
-        # topic = get_object_or_404(Topic, slug = slug1, stage__in=stages)
         obj.topic = topic
         obj.save()
-        return redirect(f'../../{obj.slug}')
+        return redirect(f'../../{obj.pk}')
     template_name = 'form.html'
     context = {'form': form}
     return render(request, template_name, context)
 
 
 @staff_member_required
-def skill_delete(request, slug1, slug2):
+def skill_delete(request, pk1, pk2):
     stages = Stage.objects.filter(teacher=request.user)
-    topic  = get_object_or_404(Topic, slug=slug1, stage__in=stages)
-    skill  = get_object_or_404(Skill, slug=slug2)
+    topic  = get_object_or_404(Topic, pk=pk1, stage__in=stages)
+    skill  = get_object_or_404(Skill, pk=pk2)
     if request.method == "POST":
         skill.delete()
         return redirect('../../..')

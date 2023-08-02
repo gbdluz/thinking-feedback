@@ -39,7 +39,7 @@
                     {% endfor %}
                     
                     {% if level_grades.1 != '' %}
-                        <select name={{skill.slug}}{{level}}>
+                        <select name={{skill.pk}}{{level}}>
                                 <option value="empty"></option>
                                 <option value="nb" {% if level_grades.1.value == 'nb' %}selected{% endif %}>nb</option> 
                                 <option value="tick"{% if level_grades.1.value == 'tick' %}selected{% endif %}>✓</option>

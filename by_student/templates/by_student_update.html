@@ -10,7 +10,7 @@
     </style>
     <h3>{{student.first_name}} {{student.last_name}}</h3>
     <h4>{{ topic }}  </h4>
-    <form method="POST", action="./{{skill.slug}}">{% csrf_token %}
+    <form method="POST", action="./{{skill.pk}}">{% csrf_token %}
         <table style="width:100%" >
             <tr>
                 <th width="25%"></th>
@@ -22,7 +22,7 @@
             <tr>
                 <td>{{ skill.title }}</td>
                 <th>
-                    <select name={{skill.slug}}1>
+                    <select name={{skill.pk}}1>
                         <option value="empty"></option>
                         <option value="nb">nb</option> 
                         <option value="tick">✓</option>
@@ -32,7 +32,7 @@
                     </select>
                 </th>
                 <th>
-                    <select name={{skill.slug}}2>
+                    <select name={{skill.pk}}2>
                         <option value="empty"></option>
                         <option value="nb">nb</option> 
                         <option value="tick">✓</option>
@@ -42,7 +42,7 @@
                     </select>
                 </th>
                 <th>
-                    <select name={{skill.slug}}3>
+                    <select name={{skill.pk}}3>
                         <option value="empty"></option>
                         <option value="nb">nb</option> 
                         <option value="tick">✓</option>
@@ -55,6 +55,7 @@
             {% endfor %}
             
         </table>
+        <br>
         <input type="submit" value="OK">
     </form> 
     <br><br>

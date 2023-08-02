@@ -32,16 +32,16 @@ def by_student_pick_topic(request, pk):
     return render(request, template_name, context)
 
 @staff_member_required
-def by_student_view(request, pk, slug):
-    student     = User.objects.get(pk=pk)
+def by_student_view(request, pk1, pk2):
+    student     = User.objects.get(pk=pk1)
     stage       = student.your_stage.stage
     if stage.teacher != request.user:
         return redirect('/')
-    obj         = get_object_or_404(Topic, slug = slug)
+    obj         = get_object_or_404(Topic, pk=pk2)
     skill_list  = Skill.objects.filter(topic = obj)
-    context = {'skill_list': skill_list, 'slug': slug, 'student': student, 'topic': obj.title}
+    context = {'skill_list': skill_list, 'student': student, 'topic': obj.title} #'slug': slug, 
     grades  = {}
-    student = User.objects.get(pk=pk)
+    student = User.objects.get(pk=pk1)
     for skill in skill_list:   
         grades[skill] = {}
         for level in (1,2,3):
@@ -55,9 +55,9 @@ def by_student_view(request, pk, slug):
     return render(request, template_name, context)
 
 @staff_member_required
-def by_student_update(request, pk, slug):
-    obj         = get_object_or_404(Topic, slug=slug)
-    student     = User.objects.get(pk = pk)
+def by_student_update(request, pk1, pk2):
+    obj         = get_object_or_404(Topic, pk=pk2)
+    student     = User.objects.get(pk=pk1)
     stage       = student.your_stage.stage
     if stage.teacher != request.user:
         return redirect('/')
@@ -67,8 +67,8 @@ def by_student_update(request, pk, slug):
     if request.POST:
         for key, value in request.POST.items():
             if key != 'csrfmiddlewaretoken' and value != 'empty':
-                skill_slug=key[:-1]
-                skill = Skill.objects.get(topic=obj, slug=skill_slug)
+                skill_pk =key[:-1]
+                skill = Skill.objects.get(topic=obj, pk=skill_pk)
                 level = key[-1]
                 grade = Grade(student=student, skill=skill, value=value, level=level)
                 grade.save()
@@ -76,16 +76,16 @@ def by_student_update(request, pk, slug):
     return render(request, template_name, context)
 
 @staff_member_required
-def by_student_edit(request, pk, slug):
-    student = User.objects.get(pk=pk)
+def by_student_edit(request, pk1, pk2):
+    student = User.objects.get(pk=pk1)
     stage = student.your_stage.stage
     if stage.teacher != request.user:
         return redirect('/')
-    obj = get_object_or_404(Topic, slug = slug)
+    obj = get_object_or_404(Topic, pk=pk2)
     skill_list  = Skill.objects.filter(topic = obj)
-    context = {'skill_list': skill_list, 'slug': slug, 'student': student, 'topic': obj.title}
+    context = {'skill_list': skill_list, 'student': student, 'topic': obj.title} #'slug': slug, 
     grades = {}
-    student = User.objects.get(pk=pk)
+    student = User.objects.get(pk=pk1)
     for skill in skill_list:   
         grades[skill] = {}
         for level in (1,2,3):
@@ -103,8 +103,8 @@ def by_student_edit(request, pk, slug):
     if request.POST:
         for key, value in request.POST.items():
             if key != 'csrfmiddlewaretoken': 
-                skill_slug = key[:-1]
-                skill = Skill.objects.get(topic=obj, slug=skill_slug)
+                skill_pk = key[:-1]
+                skill = Skill.objects.get(topic=obj, pk=skill_pk)
                 level = key[-1]
                 grade = Grade.objects.filter(student=student, skill=skill, level=level).last()
                 if value == 'empty':

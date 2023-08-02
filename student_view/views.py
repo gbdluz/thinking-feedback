@@ -15,16 +15,12 @@ def student_topics(request):
     return render(request, template_name, context)
 
 @login_required
-def student_detail(request, slug):
+def student_detail(request, pk):
     if request.user.is_staff:
         return redirect('/')
-    obj = get_object_or_404(Topic, slug = slug)
+    obj = get_object_or_404(Topic, pk=pk)
     skill_list = Skill.objects.filter(topic = obj)
-    context = {'skill_list': skill_list, 'slug': slug, 'title': '', 'topic': obj.title}
-    # context['skill_list']   = skill_list
-    # context['slug']         = slug
-    # context['title']        = ''
-    # context['topic']        = obj.title
+    context = {'skill_list': skill_list, 'title': '', 'topic': obj.title} #'slug': slug, 
     grades = {}
     student = request.user
     for skill in skill_list:   
