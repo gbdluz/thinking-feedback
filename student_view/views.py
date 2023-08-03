@@ -3,9 +3,12 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 
 from topic.models import Topic, Grade, Skill
+from users.decorators import email_required, new_password_required
 
 # Create your views here.
 @login_required
+@email_required 
+@new_password_required
 def student_topics(request):
     if request.user.is_staff:
         return redirect('/')
@@ -15,6 +18,8 @@ def student_topics(request):
     return render(request, template_name, context)
 
 @login_required
+@email_required 
+@new_password_required
 def student_detail(request, pk):
     if request.user.is_staff:
         return redirect('/')

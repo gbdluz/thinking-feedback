@@ -6,15 +6,17 @@ from django.contrib.auth.views import PasswordChangeView, PasswordResetConfirmVi
 from django.contrib.auth.decorators import login_required
 from django.contrib.admin.views.decorators import staff_member_required
 from django.urls import reverse_lazy
+from django.contrib.auth.hashers import check_password
 
 from topic.forms import SignUpForm, UpdateForm
 from .forms import PasswordChangingForm, PasswordSettingForm, PasswordResettingForm
-from topic.models import Your_Stage
+from topic.models import Your_Stage, Initial_Password
+from .decorators import authentication_not_required, new_password_required, email_required
 
-
-
+@email_required 
+@new_password_required
 def home_page(request):
-    return render(request, 'title.html', {'title': 'Welcome to ThinkingFeedback!'})
+    return render(request, 'title.html', {'title': f'Welcome to ThinkingFeedback!'})
 
 
 def login_page(request):
@@ -43,7 +45,7 @@ def logout_page(request):
     messages.success(request, message="You were logged out")
     return redirect('/')
 
-
+@authentication_not_required
 def register(request):
     form = SignUpForm(request.POST or None)
     if form.is_valid():
@@ -61,7 +63,6 @@ def register(request):
     template_name = 'form.html'
     context = {'title': 'Register', 'form': form}
     return render(request, template_name, context)
-
 
 
 class PasswordsChangeView(PasswordChangeView):
@@ -93,7 +94,7 @@ def update_user(request):
         user.password = obj.password
         user.save()
         login(request, user)
-        return redirect('/')
+        return redirect('/password/')
     template_name = 'update_user.html'
     context = {'user': user, 'title': 'Update your details', 'form': form}
     return render(request, template_name, context)
