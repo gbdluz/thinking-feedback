@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.models import Group, User
 
 # Register your models here.
-from .models import Topic, Skill, Grade, Stage, Your_Stage, Initial_Password
+from topic.models import Topic, Skill, Grade
+from users.models import Stage, Your_Stage, Initial_Password
 
 admin.site.register(Topic)
 admin.site.register(Skill)

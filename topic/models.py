@@ -6,45 +6,8 @@ from django.db.models.signals import pre_save, post_delete
 from django.contrib.auth import get_user_model, get_user
 from django.db.models.fields.related import RelatedField
 
-User = settings.AUTH_USER_MODEL
-
 # Create your models here.
-
-class Initial_Password(models.Model):
-    student = models.ForeignKey(User, on_delete=models.CASCADE)
-    password = models.CharField(max_length=20)
-    
-    def __str__(self):
-        return f"{ self.student.first_name } { self.student.last_name }"
-
-class Stage(models.Model):
-    title   = models.CharField(max_length=20)
-    teacher = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
-    number  = models.IntegerField(null=True, blank=True)
-    
-    def __str__(self):
-        return self.title
-    
-    def get_update_url(self):
-        return f"/your_classes/add/next/{self.pk}"
-    
-    def get_passwords_url(self):
-        return f"/your_classes/{self.pk}/passwords/"
-    
-    def get_edit_url(self):
-        return f"/your_classes/{self.pk}/edit"
-    
-    def get_edit_name_url(self):
-        return f"/your_classes/{self.pk}/edit/name"
-    
-
-class Your_Stage(models.Model):
-    user  = models.OneToOneField(User, on_delete=models.CASCADE)
-    role  = models.CharField(max_length=8, choices=[('STUDENT', 'Student'), ('TEACHER', 'Teacher')], default='STUDENT')
-    stage = models.ForeignKey(Stage, null=True, blank=True, on_delete=models.CASCADE)
-
-
-
+from users.models import Stage
 
 
 class Topic(models.Model):
@@ -109,10 +72,9 @@ class Grade(models.Model):
         return f"{ self.publish_date.strftime('%d-%m-%Y') }"
 
 
-
-User = get_user_model()
 def delete_students(sender, instance, **kwargs):
-    students = User.objects.filter(your_stage=None, is_staff=False)
+
+    students = get_user_model().objects.filter(your_stage=None, is_staff=False)
     for student in students:
         student.delete()
 

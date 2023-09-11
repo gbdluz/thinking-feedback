@@ -10,7 +10,7 @@ from django.contrib.auth.hashers import check_password
 
 from topic.forms import SignUpForm, UpdateForm
 from .forms import PasswordChangingForm, PasswordSettingForm, PasswordResettingForm
-from topic.models import Your_Stage, Initial_Password
+from users.models import Your_Stage
 from .decorators import authentication_not_required, new_password_required, email_required
 
 @email_required 

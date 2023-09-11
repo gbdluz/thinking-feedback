@@ -2,7 +2,6 @@ from django import forms
 from django.contrib import admin
 from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm, SetPasswordForm, PasswordResetForm
 from django.contrib.auth.models import User
-from topic.models import Topic, Skill, Stage
 
 
 class PasswordChangingForm(PasswordChangeForm):
