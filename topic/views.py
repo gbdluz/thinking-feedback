@@ -9,7 +9,8 @@ from django import forms
 # from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm, PasswordResetForm
 
 # Create your views here.
-from .models import Topic, Skill, Grade, Stage, Your_Stage, Initial_Password
+from topic.models import Topic, Skill, Grade
+from users.models import Stage, Your_Stage, Initial_Password
 from .forms import TopicModelForm, SignUpForm, SkillModelForm, UpdateForm, StageEditForm, StudentForm
 from users.forms import PasswordChangingForm, PasswordSettingForm, PasswordResettingForm
 from users.views import home_page

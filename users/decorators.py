@@ -2,7 +2,7 @@ import functools
 from django.shortcuts import redirect
 from django.contrib import messages
 from django.contrib.auth.hashers import check_password
-from topic.models import Initial_Password
+from users.models import Initial_Password
 
 def authentication_not_required(view_func):
     @functools.wraps(view_func)

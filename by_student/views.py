@@ -2,7 +2,8 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
 
-from topic.models import Topic, Skill, Grade, Your_Stage, Stage
+from users.models import Your_Stage, Stage
+from topic.models import Topic, Skill, Grade
 # Create your views here.
 @staff_member_required
 def by_student(request):
