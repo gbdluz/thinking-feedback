@@ -4,32 +4,31 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('topic', '0006_stage_your_stage_initial_password_alter_topic_stage'),
-        ('users', '0001_initial'),
+        ("topic", "0006_stage_your_stage_initial_password_alter_topic_stage"),
+        ("users", "0001_initial"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='stage',
-            name='teacher',
+            model_name="stage",
+            name="teacher",
         ),
         migrations.RemoveField(
-            model_name='your_stage',
-            name='stage',
+            model_name="your_stage",
+            name="stage",
         ),
         migrations.RemoveField(
-            model_name='your_stage',
-            name='user',
+            model_name="your_stage",
+            name="user",
         ),
         migrations.DeleteModel(
-            name='Initial_Password',
+            name="Initial_Password",
         ),
         migrations.DeleteModel(
-            name='Stage',
+            name="Stage",
         ),
         migrations.DeleteModel(
-            name='Your_Stage',
+            name="Your_Stage",
         ),
     ]

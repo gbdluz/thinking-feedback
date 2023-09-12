@@ -4,18 +4,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('topic', '0006_stage_your_stage_initial_password_alter_topic_stage'),
+        ("topic", "0006_stage_your_stage_initial_password_alter_topic_stage"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='skill',
-            name='slug',
+            model_name="skill",
+            name="slug",
         ),
         migrations.RemoveField(
-            model_name='topic',
-            name='slug',
+            model_name="topic",
+            name="slug",
         ),
     ]

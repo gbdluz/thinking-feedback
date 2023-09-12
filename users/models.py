@@ -1,7 +1,8 @@
-from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
 
 # Create your models here.
+
 
 class Initial_Password(models.Model):
     student = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -34,6 +35,9 @@ class Stage(models.Model):
 
 class Your_Stage(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    role = models.CharField(max_length=8, choices=[('STUDENT', 'Student'), ('TEACHER', 'Teacher')], default='STUDENT')
+    role = models.CharField(
+        max_length=8,
+        choices=[("STUDENT", "Student"), ("TEACHER", "Teacher")],
+        default="STUDENT",
+    )
     stage = models.ForeignKey(Stage, null=True, blank=True, on_delete=models.CASCADE)
-
