@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 
 from users.models import InitialPassword
-from classes.models import Stage, YourStage
+from classes.models import Stage
 from topic.forms import StageEditForm, StudentForm
 
 # Create your views here.
@@ -15,9 +15,7 @@ def list_students(request):
     stages = Stage.objects.filter(teacher=request.user)
     students = {}
     for stage in stages:
-        temp = YourStage.objects.filter(stage=stage)
-        std = User.objects.filter(your_stage__in=temp)
-        students[stage] = std
+        students[stage] = stage.students.all()
     context["students"] = students
     context["empty"] = 0
     if len(students) == 0:
@@ -29,8 +27,7 @@ def list_students(request):
 @staff_member_required
 def view_passwords(request, pk):
     stage = Stage.objects.get(pk=pk, teacher=request.user)
-    your_stages = YourStage.objects.filter(stage=stage)
-    students = User.objects.filter(yourstage__in=your_stages)
+    students = stage.students.all()
     passwords = InitialPassword.objects.filter(student__in=students)
     context = {"stage": stage, "passwords": passwords}
     template_name = "view_passwords.html"
@@ -40,8 +37,7 @@ def view_passwords(request, pk):
 @staff_member_required
 def edit_class(request, pk):
     stage = get_object_or_404(Stage, pk=pk, teacher=request.user)
-    your_stages = YourStage.objects.filter(stage=stage)
-    students = User.objects.filter(yourstage__in=your_stages)
+    students = stage.students.all()
     template_name = "edit_class.html"
     context = {"stage": stage, "students": students}
     return render(request, template_name, context)
@@ -105,13 +101,8 @@ def add_student(request, pk):
         password = User.objects.make_random_password()
         student.set_password(password)
         student.save()
-        your_stage = YourStage()
-        your_stage.user = student
-        your_stage.role = "STUDENT"
-        your_stage.stage = stage
-        your_stage.save()
-        student.your_stage = your_stage
-        student.save()
+        stage.students.add(student)
+        stage.save()
         InitialPassword.objects.create(student=student, password=password)
         return redirect("/your_classes")
     context = {"stage": stage, "form": form}
@@ -150,7 +141,7 @@ def add_class(request):
 @staff_member_required
 def add_class_next(request, pk):
     stage = Stage.objects.get(pk=pk)
-    students = YourStage.objects.filter(stage=stage)
+    students = stage.students.all()
     if students:
         return redirect("/")
     else:
@@ -178,13 +169,8 @@ def add_class_next(request, pk):
                 student.set_password(password)
                 student.save()
                 passwords[student] = password
-                your_stage = YourStage()
-                your_stage.user = student
-                your_stage.role = "STUDENT"
-                your_stage.stage = stage
-                your_stage.save()
-                student.your_stage = your_stage
-                student.save()
+                stage.students.add(student)
+                stage.save()
                 InitialPassword.objects.create(student=student, password=password)
             stage.passwords = passwords
             # print(stage, stage.passwords)

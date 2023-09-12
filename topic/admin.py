@@ -4,16 +4,11 @@ from django.contrib.auth.models import Group, User
 # Register your models here.
 from topic.models import Topic, Skill, Grade
 from users.models import InitialPassword
-from classes.models import Stage, YourStage
+from classes.models import Stage
 
 admin.site.register(Topic)
 admin.site.register(Skill)
 admin.site.unregister(Group)
-
-
-class StageInline(admin.StackedInline):
-    model = YourStage
-    can_delete = False
 
 
 class UserAdmin(admin.ModelAdmin):
@@ -28,7 +23,6 @@ class UserAdmin(admin.ModelAdmin):
         "is_staff",
         "is_superuser",
     ]
-    inlines = [StageInline]
 
 
 admin.site.unregister(User)

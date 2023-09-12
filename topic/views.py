@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 
 # Create your views here.
 from topic.models import Grade, Skill, Topic
-from classes.models import Stage, YourStage
+from classes.models import Stage
 
 from .forms import (
     SkillModelForm, TopicModelForm,
@@ -116,8 +116,7 @@ def skill_update(request, pk1, pk2):
     skill = get_object_or_404(Skill, pk=pk2)
     stage = topic.stage
     template_name = "skill_update.html"
-    std_stages = YourStage.objects.filter(stage=stage)
-    students = User.objects.filter(your_stage__in=std_stages)
+    students = stage.students.all()
     context = {"topic": topic, "skill": skill, "stage": stage, "students": students}
 
     if request.POST:
@@ -158,8 +157,7 @@ def skill_grade_edit_next(request, pk1, pk2, level):
         context["level"] = "Challenge"
 
     stage = topic.stage
-    std_stages = YourStage.objects.filter(stage=stage)
-    students = User.objects.filter(your_stage__in=std_stages)
+    students = stage.students.all()
     add = {"stage": stage, "students": students}
     context = {**context, **add}
 
@@ -221,8 +219,7 @@ def skill_grade_delete_next(request, pk1, pk2, level):
         context["level"] = "Challenge"
 
     stage = topic.stage
-    std_stages = YourStage.objects.filter(stage=stage)
-    students = User.objects.filter(your_stage__in=std_stages)
+    students = stage.students.all()
     add = {"stage": stage, "students": students}
     context = {**context, **add}
 

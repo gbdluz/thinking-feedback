@@ -11,7 +11,6 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
 from topic.forms import SignUpForm, UpdateForm
-from classes.models import YourStage
 
 from .decorators import (
     authentication_not_required, email_required,
@@ -65,11 +64,6 @@ def register(request):
         obj = form.save(commit=False)
         obj.is_staff = True
         obj.save()
-        stage = YourStage()
-        stage.user = obj
-        stage.role = "TEACHER"
-        stage.save()
-        obj.your_stage = stage
         obj.save()
         login(request, obj)
         return redirect("/")
