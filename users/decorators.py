@@ -4,7 +4,8 @@ from django.contrib import messages
 from django.contrib.auth.hashers import check_password
 from django.shortcuts import redirect
 
-from users.models import Initial_Password
+from users.models import InitialPassword
+
 
 
 def authentication_not_required(view_func):
@@ -34,7 +35,7 @@ def new_password_required(view_func):
     @functools.wraps(view_func)
     def wrapper(request, *args, **kwargs):
         if request.user.is_authenticated:
-            initial_passwords = Initial_Password.objects.filter(student=request.user)
+            initial_passwords = InitialPassword.objects.filter(student=request.user)
             if len(initial_passwords) > 0:
                 initial_password = initial_passwords.first().password
                 if check_password(initial_password, request.user.password):

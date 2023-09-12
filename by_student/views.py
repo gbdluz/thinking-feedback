@@ -2,9 +2,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 
-from topic.models import Grade, Skill, Topic
-from users.models import Stage, Your_Stage
-
+from classes.models import Stage, YourStage
+from topic.models import Topic, Skill, Grade
 
 # Create your views here.
 @staff_member_required
@@ -12,7 +11,7 @@ def by_student(request):
     stages = Stage.objects.filter(teacher=request.user)
     students = {}
     for stage in stages:
-        temp = Your_Stage.objects.filter(stage=stage)
+        temp = YourStage.objects.filter(stage=stage)
         std = User.objects.filter(your_stage__in=temp)
         students[stage] = std
     context = {"students": students, "empty": 0}
