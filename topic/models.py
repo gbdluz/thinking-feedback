@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models.signals import post_delete
 
 # Create your models here.
-from users.models import Stage
+from classes.models import Stage
 
 
 class Topic(models.Model):

@@ -4,7 +4,8 @@ from django.contrib.auth.forms import (
 )
 from django.contrib.auth.models import User
 
-from .models import Skill, Stage, Topic
+from .models import Topic, Skill
+from classes.models import Stage
 
 
 class TopicModelForm(forms.ModelForm):
