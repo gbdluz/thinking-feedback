@@ -22,7 +22,7 @@ def by_student(request):
 @staff_member_required
 def by_student_pick_topic(request, pk):
     student = User.objects.get(pk=pk)
-    stage = student.classes[0]  #TODO: allow multiple user
+    stage = student.classes.all()[0]  #TODO: allow multiple user
     if stage.teacher != request.user:
         return redirect("/")
     qs = Topic.objects.filter(stage=stage)
