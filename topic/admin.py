@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.contrib.auth.models import Group, User
 
 # Register your models here.
-from topic.models import Topic, Skill, Grade
+from topic.models import Topic, Skill
+from grade.models import Grade
 from users.models import InitialPassword
 from classes.models import Stage
 
