@@ -42,8 +42,10 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "by_student",
     "classes",
-    "topic",
+    "grade",
     "student_view",
+    "task",
+    "topic",
     "users",
 ]
 

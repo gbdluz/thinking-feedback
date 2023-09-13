@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from topic.models import Grade, Skill, Topic
+from topic.models import Skill, Topic
+from grade.models import Grade
 from users.decorators import email_required, new_password_required
 
 

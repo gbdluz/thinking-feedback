@@ -5,11 +5,11 @@ from django.db.models.signals import post_delete
 
 # Create your models here.
 from classes.models import Stage
+from task.models import Task, TaskGenerator
 
 
 class Topic(models.Model):
     title = models.CharField(max_length=120)
-    # slug    = models.SlugField(unique = True)
     teacher = models.ForeignKey(User, on_delete=models.CASCADE)
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
 
@@ -31,7 +31,6 @@ class Topic(models.Model):
 
 class Skill(models.Model):
     title = models.CharField(max_length=120)
-    # slug = models.SlugField(unique = True)
     topic = models.ForeignKey(Topic, default=1, on_delete=models.CASCADE)
 
     def get_absolute_url(self):
@@ -53,22 +52,19 @@ class Skill(models.Model):
         return self.title
 
 
-class Grade(models.Model):
-    CHOICES = (("tick", "✓"), ("cross", "☓"), ("G", "G"), ("B", "B"), ("nb", "nb"))
-    student = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
-    skill = models.ForeignKey(Skill, default=1, on_delete=models.CASCADE)
-    value = models.CharField(max_length=5, choices=CHOICES, default="nb")
+class SkillLevel(models.Model):
+    skills = models.ManyToManyField(Skill, related_name="levels")
     level = models.CharField(
         max_length=1,
         choices=(("1", "Chill"), ("2", "Medium"), ("3", "Challenge")),
         default=1,
     )
-    publish_date = models.DateTimeField(auto_now_add=True)
+    example_task = models.ForeignKey(Task, default=1, on_delete=models.CASCADE)
+    tasks = models.ManyToManyField(Task, related_name="skill_levels")
+    generators = models.ManyToManyField(TaskGenerator, related_name="skill_levels")
 
-    def __str__(self):
-        return f"{ self.publish_date.strftime('%d-%m-%Y') }"
 
-
+# What happens here??
 def delete_students(sender, instance, **kwargs):
     students = get_user_model().objects.filter(your_stage=None, is_staff=False)
     for student in students:

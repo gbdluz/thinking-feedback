@@ -3,7 +3,8 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 
 # Create your views here.
-from topic.models import Grade, Skill, Topic
+from topic.models import Skill, Topic
+from grade.models import Grade
 from classes.models import Stage
 
 from .forms import (
