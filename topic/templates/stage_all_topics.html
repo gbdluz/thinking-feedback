@@ -3,7 +3,7 @@
 {% block content %}
 {% for stage, topic_stage in topics.items %}
     <h2>{{ stage }}</h2>
-    {% for topic in topic_stage %}    
+    {% for topic in topic_stage %}
         <li><a href='{{ topic.get_absolute_url }}'>{{ topic.title }}</a></li>
     {% endfor %}
 

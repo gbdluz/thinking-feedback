@@ -3,15 +3,14 @@
 {% block content %}
     <h3>{{ topic.title }}</h3>
     <p>{{ skill.title }}</p>
-    Pick a level of advancement: 
-    <form method="POST", action=".">{% csrf_token %}
+    Pick a level of advancement:
+    <form method="POST", action="../../topic/templates">{% csrf_token %}
         <select name='level'>
-            <option value=1>Chill</option> 
+            <option value=1>Chill</option>
             <option value=2>Medium</option>
-            <option value=3>Challenge</option>                               
+            <option value=3>Challenge</option>
         </select>
-        <br><br>    
+        <br><br>
         <input type="submit" value="OK">
-    </form>    
+    </form>
 {% endblock %}
-

@@ -1,15 +1,56 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <h1> {{ object.title }} </h1>
-    <p><a href = '{{ object.get_update_url }}'>Edit topic</a><br>
-        <a href = '{{ object.get_delete_url}}'>Delete topic</a></p>
-    {% for skill in skill_list %}
-        <li><a href = '{{ skill.get_absolute_url }}'>{{ skill.title }}</a></li>
-    {% endfor %}
+    <h1> {{ topic.title }} </h1>
+    <p><a href = '{{ topic.get_update_url }}'>Edit topic</a><br>
+        <a href = '{{ topic.get_delete_url}}'>Delete topic</a></p>
+
+    <table>
+      <tr>
+        <th>Umiejętność</th>
+        <th>Podstawowa</th>
+        <th>Średniozaawansowana</th>
+        <th>Zaawansowana</th>
+        <th>Edytuj</th>
+      </tr>
+      {% for skill, levels in skills %}
+        <tr>
+          <td>{{ skill.title }}</td>
+          <td class="inner-table">
+            <table>
+              <tr>
+                {% for level in levels.chill %}
+                  <td>
+                    {{ level.description }}
+                    <a href = '{{ level.get_add_skill_to_skill_level_url }}'> Add new skill</a>
+                    <a href = '{{ level.get_edit_url }}'> Edit</a>
+                    <a href = '{{ level.get_delete_url }}'> Delete</a>
+                  </td>
+                {% endfor %}
+              </tr>
+            </table>
+          </td>
+          <td>{% for level in levels.medium %} {{ level.description }} {% endfor %}</td>
+          <td>{% for level in levels.challenge %} {{ level.description }} {% endfor %}</td>
+          <td class="inner-table">
+            <table>
+              <tr>
+{#                <td><a href = '{{ skill.get_absolute_url }}'> Add grades: {{ skill.title }}</a></td>#}
+                <td><a href = '{{ skill.get_add_skill_level_url }}'> Add skill level for {{ skill.title }}</a></td>
+                <td><a href = '{{ skill.get_edit_url }}'> Edit {{ skill.title }}</a></td>
+                <td><a href = '{{ skill.get_delete_url }}'> Delete {{ skill.title }}</a></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+
+
+
     {% if empty %}
         Oh no! It seems that you have no skills in this topic currently.<br>
     {% endif %}
     <br>
-    <p><a href = '{{ object.get_add_skill_url }}'>Add a new skill</a></p>
+    <p><a href = '{{ topic.get_add_skill_url }}'>Add a new skill</a></p>
 {% endblock %}

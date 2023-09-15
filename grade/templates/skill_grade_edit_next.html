@@ -3,7 +3,7 @@
 {% block content %}
     <h3>{{ topic.title }}</h3>
     <p>{{ skill.title }}</p>
-    Pick a level of advancement: 
+    Pick a level of advancement:
     <br>
     <h6>{{ level }}</h6>
 
@@ -17,15 +17,15 @@
                 <td>
                     <li> <label>{{ student.first_name }} {{ student.last_name }}</label></li>
                 </td>
-                
+
                 <td>
                     <select name={{ student.pk }}>
                         <option value="empty"></option>
-                        <option value="nb" {% if grade.value == 'nb' %}selected{% endif %}>nb</option> 
+                        <option value="nb" {% if grade.value == 'nb' %}selected{% endif %}>nb</option>
                         <option value="tick" {% if grade.value == 'tick' %}selected{% endif %}>✓</option>
                         <option value="cross" {% if grade.value == 'cross' %}selected{% endif %}>☓</option>
                         <option value="G" {% if grade.value == 'G' %}selected{% endif %}>G</option>
-                        <option value="B" {% if grade.value == 'B' %}selected{% endif %}>B</option>                               
+                        <option value="B" {% if grade.value == 'B' %}selected{% endif %}>B</option>
                     </select>
                 </td>
             </tr>
@@ -34,4 +34,3 @@
         <input type="submit" value="OK">
     </form>
 {% endblock %}
-

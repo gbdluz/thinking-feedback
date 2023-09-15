@@ -14,7 +14,7 @@
             <td>
                 <li> <label>{{ student.first_name }} {{ student.last_name }}</label></li>
             </td>
-            
+
             <td>
                 {% if grade.value == 'tick' %}✓
                 {% elif grade.value == 'cross'%}☓
@@ -24,10 +24,9 @@
         </tr>
         {% endfor %}
     </table><br>
-    
+
     <form method="POST">{% csrf_token %}
         <button class="btn btn-danger">Yes, delete</button>
     </form>
 
 {% endblock %}
-
