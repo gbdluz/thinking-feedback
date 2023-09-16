@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h3>Are you sure you want to delete this task generator?</h3><br>
+<h5>{{ task_generator.code }}</h5>
+<form method="POST">{% csrf_token %}
+    <button class="btn btn-danger">Yes, delete</button>
+</form>
+
+
+{% endblock %}

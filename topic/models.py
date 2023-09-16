@@ -63,7 +63,7 @@ class SkillLevel(models.Model):
         default=1,
     )
     description = models.CharField(max_length=200)
-    example_task = models.ForeignKey(Task, default=None, null=True, on_delete=models.CASCADE)
+    example_task = models.ForeignKey(Task, default=None, null=True, on_delete=models.SET_DEFAULT)
     tasks = models.ManyToManyField(Task, related_name="skill_levels")
     generators = models.ManyToManyField(TaskGenerator, related_name="skill_levels")
 
@@ -75,6 +75,12 @@ class SkillLevel(models.Model):
 
     def get_delete_url(self):
         return f"/topic/{self.skills.all()[0].topic.pk}/skill_level/{self.pk}/delete"
+
+    def get_add_task_url(self):
+        return f"/topic/{self.skills.all()[0].topic.pk}/skill_level/{self.pk}/task/add"
+
+    def get_add_generator_url(self):
+        return f"/topic/{self.skills.all()[0].topic.pk}/skill_level/{self.pk}/generator/add"
 
 
 # What happens here??

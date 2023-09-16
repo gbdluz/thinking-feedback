@@ -8,30 +8,51 @@
     <table>
       <tr>
         <th>Umiejętność</th>
-        <th>Podstawowa</th>
+        <th>_____Podstawowa_____</th>
         <th>Średniozaawansowana</th>
-        <th>Zaawansowana</th>
+        <th>_____Zaawansowana_____</th>
         <th>Edytuj</th>
       </tr>
       {% for skill, levels in skills %}
         <tr>
           <td>{{ skill.title }}</td>
+          {% for level_container in levels %}
           <td class="inner-table">
             <table>
               <tr>
-                {% for level in levels.chill %}
+                {% for level in level_container %}
                   <td>
                     {{ level.description }}
-                    <a href = '{{ level.get_add_skill_to_skill_level_url }}'> Add new skill</a>
+                    <a href = '{{ level.get_add_skill_to_skill_level_url }}'> Add skill</a>
                     <a href = '{{ level.get_edit_url }}'> Edit</a>
                     <a href = '{{ level.get_delete_url }}'> Delete</a>
+                    <a href = '{{ level.get_add_task_url }}'> Add task</a>
+                    <a href = '{{ level.get_add_generator_url }}'> Add generator</a>
+                    {{ level.example_task.content }}
+                    <a href = '{{ level.example_task.get_edit_url }}'> Edit</a>
+                    <a href = '{{ level.example_task.get_delete_url }}'> Delete</a>
+                    Tasks:
+                      {% for task in level.tasks.all %}
+                        <li>
+                          {{ task.source }}
+                          <a href = '{{ task.get_edit_url }}'> Edit</a>
+                          <a href = '{{ task.get_delete_url }}'> Delete</a>
+                        </li>
+                      {% endfor %}
+                    Generators:
+                      {% for generator in level.generators.all %}
+                        <li>
+                          {{ generator.code }}
+                          <a href = '{{ generator.get_edit_url }}'> Edit</a>
+                          <a href = '{{ generator.get_delete_url }}'> Delete</a>
+                        </li>
+                      {% endfor %}
                   </td>
                 {% endfor %}
               </tr>
             </table>
           </td>
-          <td>{% for level in levels.medium %} {{ level.description }} {% endfor %}</td>
-          <td>{% for level in levels.challenge %} {{ level.description }} {% endfor %}</td>
+          {% endfor %}
           <td class="inner-table">
             <table>
               <tr>
@@ -45,8 +66,6 @@
         </tr>
       {% endfor %}
     </table>
-
-
 
     {% if empty %}
         Oh no! It seems that you have no skills in this topic currently.<br>

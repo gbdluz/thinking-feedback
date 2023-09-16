@@ -1,5 +1,4 @@
 from django.contrib.admin.views.decorators import staff_member_required
-from django.forms import ModelMultipleChoiceField
 from django.shortcuts import get_object_or_404, redirect, render
 
 # Create your views here.
@@ -9,8 +8,6 @@ from classes.models import Stage
 from .forms import (
     SkillModelForm, TopicModelForm, SkillLevelModelForm, SkillLevelNewSkillModelForm,
 )
-
-# from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm, PasswordResetForm
 
 
 context = {}
@@ -42,11 +39,11 @@ def topic_detail_view(request, pk):
     skill_objects = Skill.objects.filter(topic=topic)
     skills = []
     for skill in skill_objects:
-        levels = {
-            "chill": skill.levels.filter(level__startswith="1").all(),
-            "medium": skill.levels.filter(level__startswith="2").all(),
-            "challenge": skill.levels.filter(level__startswith="3").all(),
-        }
+        levels = [
+            skill.levels.filter(level__startswith="1").all(),
+            skill.levels.filter(level__startswith="2").all(),
+            skill.levels.filter(level__startswith="3").all(),
+        ]
         skills.append((skill, levels))
     template_name = "topic_detail.html"
     context = {"topic": topic, "skills": skills}
