@@ -1,34 +1,72 @@
+from collections import defaultdict
+
+from bootstrap_modal_forms.generic import BSModalCreateView
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 
 from classes.models import Stage
-from grade.models import Grade
+from grade.forms import StageTopicsStudentsForm, GradeModelForm, GradeModalModelForm
+from grade.models import Grade, MARK_CHOICES, TYPE_CHOICES
 from topic.models import Topic, Skill
 
 
+# TODO: use one of below
 @staff_member_required
-def grade_add(request, pk1, pk2):
-    stages = Stage.objects.filter(teacher=request.user)
-    topic = get_object_or_404(Topic, pk=pk1, stage__in=stages)
-    skill = get_object_or_404(Skill, pk=pk2)
-    stage = topic.stage
-    template_name = "grade_add.html"
-    students = stage.students.all()
-    context = {"topic": topic, "skill": skill, "stage": stage, "students": students}
-
-    if request.POST:
-        for key in request.POST.keys():
-            if key != "csrfmiddlewaretoken" and key != "level":
-                student = User.objects.get(pk=key)
-                value = request.POST[key]
-                level = request.POST["level"]
-                grade = Grade(student=student, skill=skill, value=value, level=level)
-                grade.save()
-        return redirect("../..")
+def add_grade(request):
+    form = GradeModelForm(request.POST or None)
+    if form.is_valid():
+        grade = form.save(commit=False)
+        grade.save()
+        return redirect("../")
+    template_name = "form.html"
+    context = {"form": form}
     return render(request, template_name, context)
 
 
+class GradeCreateView(BSModalCreateView):
+    template_name = 'create_grade.html'
+    form_class = GradeModalModelForm
+    success_message = 'Success: Book was created.'
+    success_url = "/"
+
+
+@staff_member_required
+def choose_stage_topic_students(request):
+    # stages = Stage.objects.filter(teacher=request.user)
+    stage_chosen=False
+    user = request.user
+    form = StageTopicsStudentsForm(user, request.POST or None)
+
+    if form.is_valid():
+        stage = form.cleaned_data["stage"]
+        if stage is not None:
+            stage_chosen=True
+        skills = form.cleaned_data["skills"]
+        students = form.cleaned_data["students"]
+
+        marks = sorted(MARK_CHOICES, key=lambda x: x[0]!=form.cleaned_data["default_mark"])
+        types = sorted(TYPE_CHOICES, key=lambda x: x[0]!=form.cleaned_data["default_type"])
+        # the second form with more fields available
+        if len(skills) == 0 or len(students) == 0:
+            form = StageTopicsStudentsForm(user, request.POST or None, stage=stage)
+        else:
+            topic_to_skills = defaultdict(list)
+            for skill in skills:
+                topic_to_skills[skill.topic.title].append(skill)
+            context = {
+                "stage": stage, "topic_to_skills": dict(topic_to_skills), "students": students,
+                "levels": [1, 2, 3], "marks": marks, "types": types,
+            }
+            template_name = "add_grades.html"
+            return render(request, template_name, context)
+
+    context = {"stage_chosen": stage_chosen, "form": form}
+    template_name = "choose_stage_topics_students.html"
+    return render(request, template_name, context)
+
+
+# TODO: refactor below
 @staff_member_required
 def skill_grade_edit(request, pk1, pk2):
     stages = Stage.objects.filter(teacher=request.user)

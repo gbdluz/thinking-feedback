@@ -32,6 +32,7 @@ class Topic(models.Model):
 class Skill(models.Model):
     title = models.CharField(max_length=120)
     topic = models.ForeignKey(Topic, default=1, on_delete=models.CASCADE)
+    required_passes = models.IntegerField(default=1)
 
     def get_absolute_url(self):
         return f"/topic/{self.topic.pk}/skill/{self.pk}"
@@ -52,7 +53,7 @@ class Skill(models.Model):
         return f"/topic/{self.topic.pk}/skill/{self.pk}/add_skill_level"
 
     def __str__(self):
-        return self.title
+        return f"{self.title} ({self.topic.title})"
 
 
 class SkillLevel(models.Model):
@@ -66,6 +67,7 @@ class SkillLevel(models.Model):
     example_task = models.ForeignKey(Task, default=None, null=True, on_delete=models.SET_DEFAULT)
     tasks = models.ManyToManyField(Task, related_name="skill_levels")
     generators = models.ManyToManyField(TaskGenerator, related_name="skill_levels")
+    required_passes = models.IntegerField(default=1)
 
     def get_add_skill_to_skill_level_url(self):
         return f"/topic/{self.skills.all()[0].topic.pk}/skill_level/{self.pk}/add_skill_to_skill_level"

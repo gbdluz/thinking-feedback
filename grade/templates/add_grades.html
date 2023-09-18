@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1> {{ stage.title }} </h1>
+
+<table>
+  <tr>
+    <th>Uczeń</th>
+    <th>Dział</th>
+    <th>Umiejętność</th>
+    <th>_____Podstawowa_____</th>
+    <th>Średniozaawansowana</th>
+    <th>_____Zaawansowana_____</th>
+  </tr>
+  {% for student in students %}
+    {% for topic, skills in topic_to_skills.items %}
+      {% for skill in skills %}
+        <tr>
+          <td>{{ student.first_name }} {{ student.last_name }}</td>
+          <td>{{ topic.title }}</td>
+          <td>{{ skill.title }}</td>
+          {% for level in levels %}
+            <td>
+              {% for skill_level in skill.levels.all %}
+                {% if skill_level.level|stringformat:"s" == level|stringformat:"s" %}
+                  <li>
+                    {{ skill_level.description }}
+                  </li>
+                  <label for="Mark">M:</label>
+                  <select name="mark" id="mark-{{ student.pk }}-{{ skill_level.pk }}">
+                    {% for mark_value, mark_name in marks %}
+                      <option value="{{ mark_value }}">{{ mark_name }}</option>
+                    {% endfor %}
+                  </select>
+                  <label for="Type">T:</label>
+                  <select name="type" id="type-{{ student.pk }}-{{ skill_level.pk }}">
+                    {% for type_value, type_name in types %}
+                      <option value="{{ type_value }}">{{ type_value }}</option>
+                    {% endfor %}
+                  </select>
+                  <label for="comment-{{ student.pk }}-{{ skill_level.pk }}">C:</label>
+                  <input type="text" name="comment" id="comment-{{ student.pk }}-{{ skill_level.pk }}" size="10">
+                  <button type="submit" class="btn btn-primary" onclick="saveGrade('{{ student.pk }}', '{{ skill_level.pk }}')">+</button>
+                {% endif %}
+              {% endfor %}
+            </td>
+          {% endfor %}
+        </tr>
+      {% endfor %}
+    {% endfor %}
+  {% endfor %}
+</table>
+
+{% if empty %}
+    Oh no! It seems that you have no skills in this topic currently.<br>
+{% endif %}
+<br>
+<p><a href = '{{ topic.get_add_skill_url }}'>Add a new skill</a></p>
+
+  <script type="text/javascript">
+
+  var saveGrade = function(student_id, skill_level_id) {
+      console.log(student_id)
+      console.log(skill_level_id)
+
+      var data = new FormData();
+      data.append("student", student_id);
+      data.append("skill_level", skill_level_id);
+      data.append("value", document.getElementById("mark-"+student_id+"-"+skill_level_id).value);
+      data.append("type", document.getElementById("type-"+student_id+"-"+skill_level_id).value);
+      data.append("comment", document.getElementById("comment-"+student_id+"-"+skill_level_id).value);
+
+      var xhr = new XMLHttpRequest();
+      xhr.withCredentials = true;
+
+      xhr.addEventListener("readystatechange", function() {
+        if(this.readyState === 4) {
+          {#console.log(this.responseText);#}
+        }
+      });
+
+      xhr.open("POST", "http://127.0.0.1:8080/grade/add/");
+      xhr.setRequestHeader("X-CSRFToken", "BT27cq8GZf4QqNFno9GZqBuj2TFp3WXy");
+
+      xhr.send(data);
+
+      console.log("send");
+  }
+
+// BS4
+{#$(document).ready(function() {#}
+{#    $("#create-grade").modalForm({#}
+{#        formURL: "{% url 'create_grade' %}"#}
+{#    });#}
+
+// BS5
+document.addEventListener('DOMContentLoaded', (e) => {
+  modalForm(document.getElementById('create-grade'), {
+    formURL: "{% url 'create_grade' %}"
+  })
+});
+
+</script>
+
+{#Create grade button with popup#}
+<div class="modal fade" tabindex="-1" role="dialog" id="modal">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content"></div>
+  </div>
+</div>
+{% csrf_token %}
+<!-- Create grade button -->
+<button id="create-grade" class="btn btn-primary" type="button" name="button">Create grade</button>
+
+{% endblock %}

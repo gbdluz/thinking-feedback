@@ -3,15 +3,17 @@ from django.db import models
 
 from topic.models import SkillLevel
 
+MARK_CHOICES = (("tick", "✓"), ("cross", "☓"), ("G", "G"), ("B", "B"), ("nb", "nb"))
+TYPE_CHOICES = (("T", "Test"), ("C", "Conversation"), ("O", "Observation"))
+
 
 class Grade(models.Model):
-    CHOICES = (("tick", "✓"), ("cross", "☓"), ("G", "G"), ("B", "B"), ("nb", "nb"))
-    student = models.ForeignKey(User, default=1, on_delete=models.CASCADE)
-    skill_level = models.ForeignKey(SkillLevel, default=1, on_delete=models.CASCADE)
-    value = models.CharField(max_length=5, choices=CHOICES, default="nb")
+    student = models.ForeignKey(User, default=1, on_delete=models.SET_DEFAULT)
+    skill_level = models.ForeignKey(SkillLevel, default=1, on_delete=models.SET_DEFAULT)
+    value = models.CharField(max_length=5, choices=MARK_CHOICES, default="nb")
     type = models.CharField(
         max_length=1,
-        choices=(("T", "Test"), ("C", "Conversation"), ("O", "Observation")),
+        choices=TYPE_CHOICES,
         default=1,
     )
     comment = models.CharField(max_length=200)

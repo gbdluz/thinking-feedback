@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form method = 'POST' action = '.'>
+    {% csrf_token %}
+
+{#{% for field in form %}#}
+{#    <div class="fieldWrapper">#}
+{#        {{ field.errors }}#}
+{#        {{ field.label_tag }} {{ field }}#}
+{#    </div>#}
+{#{% endfor %}#}
+<div class="fieldWrapper">
+  <label for="{{ form.stage.id_for_label }}">Klasa:</label>
+  {{ form.stage }}
+</div>
+{% if stage_chosen %}
+
+<div class="fieldWrapper">
+  <label for="{{ form.default_mark.id_for_label }}">Domyślna ocena</label>
+  {{ form.default_mark }}
+</div>
+<div class="fieldWrapper">
+  <label for="{{ form.default_type.id_for_label }}">Domyślny typ oceny</label>
+  {{ form.default_type }}
+</div>
+
+<div class="fieldWrapper">
+  <label for="{{ form.skills.id_for_label }}">Umiejętności (z działu):</label>
+  {{ form.skills }}
+
+{#  {% for field in form.visible_fields %}#}
+{#    {% if field.name == "one_property" %}#}
+{#<label for="id_students_0"><input type="checkbox" name="students" value="2" checked="" id="id_students_0">#}
+{# aa</label>#}
+{#{% debug %}#}
+{#{% for field in form.visible_fields %}#}
+{#    {% if field.name == "topics" %}#}
+{#    <table>#}
+{#     {% debug %}#}
+{#    {{ field.data }}#}
+{#        {% for choice in field %}#}
+{#            <tr>#}
+{#            {% debug %}#}
+{#            {{ choice.data }}#}
+{#            <td>#}
+{#              {{ choice }}#}
+{#            </td>#}
+{#            <td>#}
+{#              <label for="id_topics_{{ choice.id }}">#}
+{#                <input type="checkbox" name="topics" value="{{choice.id}}" id="id_topics_{{ choice.id }}">#}
+{#                {{ choice.title }}#}
+{#              </label>#}
+{#            </td>#}
+{#            </tr>#}
+{#        {% endfor %}#}
+{#    </table>#}
+{#    {% endif %}#}
+{#{% endfor %}#}
+{#    {% endif %}#}
+{#  {% endfor %}#}
+{#  {{ form.topics }}#}
+</div>
+<div class="fieldWrapper">
+  <label for="{{ form.students.id_for_label }}">Uczniowie:</label>
+  {{ form.students }}
+</div>
+{% endif %}
+
+<button type = 'submit'>Send</button>
+
+</form>
+
+{% if empty %}
+    Oh! It seems that you need to add classes ('Your classes' section) to be able to add new topics.<br>
+{% endif %}
+
+  {#    Change stage submits form#}
+{#<script type="text/javascript">#}
+{#  $(function() {#}
+{#    $('#id_stage').change(function() {#}
+{#        this.form.submit();#}
+{#    });#}
+{#  });#}
+  {#window.onload = function() {#}
+  {#  select = document.getElementById('id_stage');#}
+  {#  select.setAttribute("onchange", 'if(this.value != 0) { this.form.submit(); }');#}
+  {#  #}
+{#</script>#}
+
+{% endblock %}
