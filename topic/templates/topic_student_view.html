@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1> {{ topic.title }} </h1>
+    <table class="styled-table" style="width: {{ table_width }}px;">
+      <tr>
+        <th style="width: 100px; text-align: center;">Umiejętność</th>
+        {% for title, colspan, width in header %}
+        <th colspan="{{ colspan }}" style="width: {{ width }}px; text-align: center;">{{ title }}</th>
+        {% endfor %}
+        <th style="width: 100px; text-align: center;">Minimalna liczba zaliczeń</th>
+      </tr>
+      {% for skill, levels in skills %}
+        <tr>
+          <td>{{ skill.title }}</td>
+          {% for level in levels %}
+                  {% if not level %}
+                    <td>Empty</td>
+                  {% endif %}
+
+                  {% if level and level|stringformat:"s" != "rowspan"%}
+                    <td rowspan="{{ level.rowspan }}">
+                      <b>{{ level.lvl.description }}</b>
+                      {% if level.required_passes %}
+                        <b>Minimalna liczba zaliczeń: {{ level.required_passes }}</b>
+                      {% endif %}
+                      {% if level.lvl.description and level.lvl.example_task.content %}
+                        <br>
+                      {% endif %}
+                      {{ level.lvl.example_task.content }}
+                      <br>
+                      {% if level.lvl.tasks.all %}
+                        Zadania:
+                        {% for task in level.lvl.tasks.all %}
+                          {{ task.source }},
+                        {% endfor %}
+                      {% endif %}
+                    </td>
+                  {% endif %}
+          {% endfor %}
+          <td>{{ skill.required_passes }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    {% if empty %}
+        Oh no! It seems that you have no skills in this topic currently.<br>
+    {% endif %}
+{% endblock %}

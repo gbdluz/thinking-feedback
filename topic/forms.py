@@ -17,7 +17,7 @@ class TopicModelForm(forms.ModelForm):
 class SkillModelForm(forms.ModelForm):
     class Meta:
         model = Skill
-        fields = ["title"]
+        fields = ["title", "required_passes"]
 
 
 class SkillLevelNewSkillModelForm(forms.ModelForm):
@@ -33,4 +33,4 @@ class SkillLevelNewSkillModelForm(forms.ModelForm):
 class SkillLevelModelForm(forms.ModelForm):
     class Meta:
         model = SkillLevel
-        fields = ["level", "description"]
+        fields = ["level", "description", "required_passes"]

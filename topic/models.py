@@ -13,8 +13,11 @@ class Topic(models.Model):
     teacher = models.ForeignKey(User, on_delete=models.CASCADE)
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
 
-    def get_absolute_url(self):
+    def get_edit_whole_topic_url(self):
         return f"/topic/{self.pk}"
+
+    def get_student_view_url(self):
+        return f"/topic/{self.pk}/view/"
 
     def get_update_url(self):
         return f"/topic/{self.pk}/edit/"
@@ -33,6 +36,7 @@ class Skill(models.Model):
     title = models.CharField(max_length=120)
     topic = models.ForeignKey(Topic, default=1, on_delete=models.CASCADE)
     required_passes = models.IntegerField(default=1)
+    order = models.IntegerField()
 
     def get_absolute_url(self):
         return f"/topic/{self.topic.pk}/skill/{self.pk}"
@@ -51,6 +55,9 @@ class Skill(models.Model):
 
     def get_add_skill_level_url(self):
         return f"/topic/{self.topic.pk}/skill/{self.pk}/add_skill_level"
+
+    def get_change_skill_order_url(self):
+        return f"/topic/{self.topic.pk}/skill/{self.pk}/change_order/"
 
     def __str__(self):
         return f"{self.title} ({self.topic.title})"

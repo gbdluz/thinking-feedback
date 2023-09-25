@@ -2,17 +2,30 @@
 
 {% block content %}
 {% for stage, topic_stage in topics.items %}
-    <h2>{{ stage }}</h2>
-    {% for topic in topic_stage %}
-        <li><a href='{{ topic.get_absolute_url }}'>{{ topic.title }}</a></li>
-    {% endfor %}
+    <button title="Click to Show/Hide Content" type="button"
+            onclick="spoiler('stage-{{ stage }}')">{{ stage }}</button>
 
+    <div id="stage-{{ stage }}" style="display:none">
+      {% for topic in topic_stage %}
+          <li>{{ topic.title }}  <a href='{{ topic.get_edit_whole_topic_url }}'>Edit</a>  <a href='{{ topic.get_student_view_url }}'>View</a></li>
+      {% endfor %}
+      <p><a href = '/topic/add/stage/{{ stage.pk }}'>Add a new topic</a></p>
+    </div>
 {% endfor %}
 {% if empty %}
     Oh! It seems that you need to add classes ('Your classes' section) to be able to add new topics.<br>
 {% endif %}
 <br>
-<p><a href = '/topic/add'>Add a new topic</a></p>
 
+<script>
+function spoiler(id) {
+    console.log(id)
+    if (document.getElementById(id).style.display == 'none') {
+        document.getElementById(id).style.display = ''
+    } else {
+        document.getElementById(id).style.display = 'none'
+    }
+}
+</script>
 
 {% endblock %}

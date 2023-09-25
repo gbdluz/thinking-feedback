@@ -18,6 +18,35 @@
         .inner-table {
             padding: 0;
         }
+.styled-table {
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: collapse;
+    {#margin: 25px 0;#}
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+.styled-table thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+    width: 300px;
+}
+.styled-table th,
+.styled-table td {
+    padding: 12px 15px;
+    border-left: 3px solid #adadad;
+    border-right: 3px solid #adadad;
+}
+.styled-table tbody tr {
+    border-bottom: 3px solid #adadad;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 3px solid #009879;
+}
     </style>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">

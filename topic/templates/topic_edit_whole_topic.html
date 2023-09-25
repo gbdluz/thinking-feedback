@@ -15,14 +15,14 @@
       </tr>
       {% for skill, levels in skills %}
         <tr>
-          <td>{{ skill.title }}</td>
+          <td>{{ skill.title }} ({{ skill.required_passes }})</td>
           {% for level_container in levels %}
           <td class="inner-table">
             <table>
               <tr>
                 {% for level in level_container %}
                   <td>
-                    {{ level.description }}
+                    {{ level.description }} ({{ level.required_passes }})
                     <a href = '{{ level.get_add_skill_to_skill_level_url }}'> Add skill</a>
                     <a href = '{{ level.get_edit_url }}'> Edit</a>
                     <a href = '{{ level.get_delete_url }}'> Delete</a>
@@ -60,6 +60,8 @@
                 <td><a href = '{{ skill.get_add_skill_level_url }}'> Add skill level for {{ skill.title }}</a></td>
                 <td><a href = '{{ skill.get_edit_url }}'> Edit {{ skill.title }}</a></td>
                 <td><a href = '{{ skill.get_delete_url }}'> Delete {{ skill.title }}</a></td>
+                <td><a href = '{{ skill.get_change_skill_order_url }}up/'> Up {{ skill.title }}</a></td>
+                <td><a href = '{{ skill.get_change_skill_order_url }}down/'> Down {{ skill.title }}</a></td>
               </tr>
             </table>
           </td>

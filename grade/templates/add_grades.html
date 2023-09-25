@@ -57,35 +57,35 @@
 <br>
 <p><a href = '{{ topic.get_add_skill_url }}'>Add a new skill</a></p>
 
-  <script type="text/javascript">
+<script type="text/javascript">
 
-  var saveGrade = function(student_id, skill_level_id) {
-      console.log(student_id)
-      console.log(skill_level_id)
+var saveGrade = function(student_id, skill_level_id) {
+    console.log(student_id)
+    console.log(skill_level_id)
 
-      var data = new FormData();
-      data.append("student", student_id);
-      data.append("skill_level", skill_level_id);
-      data.append("value", document.getElementById("mark-"+student_id+"-"+skill_level_id).value);
-      data.append("type", document.getElementById("type-"+student_id+"-"+skill_level_id).value);
-      data.append("comment", document.getElementById("comment-"+student_id+"-"+skill_level_id).value);
+    var data = new FormData();
+    data.append("student", student_id);
+    data.append("skill_level", skill_level_id);
+    data.append("value", document.getElementById("mark-"+student_id+"-"+skill_level_id).value);
+    data.append("type", document.getElementById("type-"+student_id+"-"+skill_level_id).value);
+    data.append("comment", document.getElementById("comment-"+student_id+"-"+skill_level_id).value);
 
-      var xhr = new XMLHttpRequest();
-      xhr.withCredentials = true;
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
 
-      xhr.addEventListener("readystatechange", function() {
-        if(this.readyState === 4) {
-          {#console.log(this.responseText);#}
-        }
-      });
+    xhr.addEventListener("readystatechange", function() {
+      if(this.readyState === 4) {
+        {#console.log(this.responseText);#}
+      }
+    });
 
-      xhr.open("POST", "http://127.0.0.1:8080/grade/add/");
-      xhr.setRequestHeader("X-CSRFToken", "BT27cq8GZf4QqNFno9GZqBuj2TFp3WXy");
+    xhr.open("POST", "http://127.0.0.1:8080/grade/add/");
+    xhr.setRequestHeader("X-CSRFToken", "BT27cq8GZf4QqNFno9GZqBuj2TFp3WXy");
 
-      xhr.send(data);
+    xhr.send(data);
 
-      console.log("send");
-  }
+    console.log("send");
+}
 
 // BS4
 {#$(document).ready(function() {#}
