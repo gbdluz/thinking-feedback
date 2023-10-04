@@ -56,6 +56,7 @@ def edit_class_name(request, pk):
 
 
 @staff_member_required
+
 def delete_class(request, pk):
     stage = get_object_or_404(Stage, pk=pk, teacher=request.user)
     if request.method == "POST":

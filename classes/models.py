@@ -27,3 +27,4 @@ class Stage(models.Model):
 
     def get_edit_name_url(self):
         return f"/your_classes/{self.pk}/edit/name"
+
