@@ -2,14 +2,14 @@
 <nav class="navbar navbar-dark navbar-expand-lg bg-dark">
     <div class="container-fluid">
       <a href="/" class="navbar-brand">ThinkingFeedback</a>
-     
+
       <div class="navbar-header" id="navbarSupportedContent"></div>
       <!-- <div class="collapse navbar-collapse" id="navbarSupportedContent"> -->
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
           <!-- <li class="nav-item">
-            
+
           </li> -->
-          
+
           {% if user.is_authenticated %}
             {% if request.user.is_staff %}
               <li class="nav-item" >
@@ -18,9 +18,13 @@
               </li>
               <li class="nav-item">
                 <!-- <li class="navbar-toggle" data-toggle="collapse"> -->
-                <a class="nav-link active" href="/topic">By subject</a>
+                <a class="nav-link active" href="/topic">Edit tables</a>
               </li>
-              
+              <li class="nav-item">
+                <!-- <li class="navbar-toggle" data-toggle="collapse"> -->
+                <a class="nav-link active" href="/grade">Add grades</a>
+              </li>
+
               <li class="nav-item">
               <!-- <li class="navbar-toggle" data-toggle="collapse"> -->
                 <a class="nav-link active" href="/by_student">By student</a>
@@ -31,16 +35,16 @@
               </li>
             {% endif %}
           {% endif %}
-          
-          
-          
+
+
+
         </ul>
             {% if not user.is_authenticated %}
-            
+
               <a class="nav-link" href="/register">Register</a>
               <a class="nav-link" href="/login">Login</a>
             {% else %}
-              <ul class="navbar-nav">  
+              <ul class="navbar-nav">
                 <!-- me-auto mb-2 mb-lg-0 -->
                 <li class="nav-item dropdown">
                   <a style="color: white" class="nav-link dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -53,15 +57,15 @@
                   </ul>
                 </li>
               </ul>
-              
+
 
               <!-- <span style="color: white"><a style="color: white" class="nav-link" href="/password"> {{user.username}} </a></span>
-              
+
               <a style="color: white" class="nav-link" href="/logout">Logout</a>   -->
-            
+
             {% endif %}
 
-        
+
       </div>
     </div>
   </nav>

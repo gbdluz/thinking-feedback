@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+
+
+{% block content %}
+
+<form method = 'POST' action = '.'> {% csrf_token %}
+    <label for="task_type">Task type:</label>
+    <select name="task_type" required>
+      <option value="example">Example</option>
+      <option value="task">One of possible</option>
+      <option value="both">Both of above</option>
+    </select>
+    {% for field in form %}
+        <div class="fieldWrapper">
+            {{ field.errors }}
+            {{ field.label_tag }}: {{ field }}
+        </div>
+    {% endfor %}
+    <br>
+    <button type = 'submit'>Send</button>
+</form>
+{% endblock %}
