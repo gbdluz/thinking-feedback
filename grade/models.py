@@ -14,6 +14,7 @@ class Grade(models.Model):
     type = models.CharField(
         max_length=1,
         choices=TYPE_CHOICES,
+
         default=1,
     )
     comment = models.CharField(max_length=200)
