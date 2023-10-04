@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>Are you sure you want to delete these grades?</h2><br>
+    <h3>{{ topic.title }}</h3>
+    <h5>{{ skill.title }}</h5>
+    <p>{{ level }}</p>
+    <table>
+        <tr>
+            <th>{{ stage }}</th>
+        </tr>
+        {% for student, grade in last_grades.items %}
+        <tr>
+            <td>
+                <li> <label>{{ student.first_name }} {{ student.last_name }}</label></li>
+            </td>
+
+            <td>
+                {% if grade.value == 'tick' %}✓
+                {% elif grade.value == 'cross'%}☓
+                {% else %}{{ grade.value }}
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+    </table><br>
+
+    <form method="POST">{% csrf_token %}
+        <button class="btn btn-danger">Yes, delete</button>
+    </form>
+
+{% endblock %}

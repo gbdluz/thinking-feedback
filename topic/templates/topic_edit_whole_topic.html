@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1> {{ topic.title }} </h1>
+    <p><a href = '{{ topic.get_update_url }}'>Edit topic</a><br>
+        <a href = '{{ topic.get_delete_url}}'>Delete topic</a></p>
+
+    <table>
+      <tr>
+        <th>Umiejętność</th>
+        <th>_____Podstawowa_____</th>
+        <th>Średniozaawansowana</th>
+        <th>_____Zaawansowana_____</th>
+        <th>Edytuj</th>
+      </tr>
+      {% for skill, levels in skills %}
+        <tr>
+          <td>{{ skill.title }} ({{ skill.required_passes }})</td>
+          {% for level_container in levels %}
+          <td class="inner-table">
+            <table>
+              <tr>
+                {% for level in level_container %}
+                  <td>
+                    {{ level.description }} ({{ level.required_passes }})
+                    <a href = '{{ level.get_add_skill_to_skill_level_url }}'> Add skill</a>
+                    <a href = '{{ level.get_edit_url }}'> Edit</a>
+                    <a href = '{{ level.get_delete_url }}'> Delete</a>
+                    <a href = '{{ level.get_add_task_url }}'> Add task</a>
+                    <a href = '{{ level.get_add_generator_url }}'> Add generator</a>
+                    {{ level.example_task.content }}
+                    <a href = '{{ level.example_task.get_edit_url }}'> Edit</a>
+                    <a href = '{{ level.example_task.get_delete_url }}'> Delete</a>
+                    Tasks:
+                      {% for task in level.tasks.all %}
+                        <li>
+                          {{ task.source }}
+                          <a href = '{{ task.get_edit_url }}'> Edit</a>
+                          <a href = '{{ task.get_delete_url }}'> Delete</a>
+                        </li>
+                      {% endfor %}
+                    Generators:
+                      {% for generator in level.generators.all %}
+                        <li>
+                          {{ generator.code }}
+                          <a href = '{{ generator.get_edit_url }}'> Edit</a>
+                          <a href = '{{ generator.get_delete_url }}'> Delete</a>
+                        </li>
+                      {% endfor %}
+                  </td>
+                {% endfor %}
+              </tr>
+            </table>
+          </td>
+          {% endfor %}
+          <td class="inner-table">
+            <table>
+              <tr>
+{#                <td><a href = '{{ skill.get_absolute_url }}'> Add grades: {{ skill.title }}</a></td>#}
+                <td><a href = '{{ skill.get_add_skill_level_url }}'> Add skill level for {{ skill.title }}</a></td>
+                <td><a href = '{{ skill.get_edit_url }}'> Edit {{ skill.title }}</a></td>
+                <td><a href = '{{ skill.get_delete_url }}'> Delete {{ skill.title }}</a></td>
+                <td><a href = '{{ skill.get_change_skill_order_url }}up/'> Up {{ skill.title }}</a></td>
+                <td><a href = '{{ skill.get_change_skill_order_url }}down/'> Down {{ skill.title }}</a></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      {% endfor %}
+    </table>
+
+    {% if empty %}
+        Oh no! It seems that you have no skills in this topic currently.<br>
+    {% endif %}
+    <br>
+    <p><a href = '{{ topic.get_add_skill_url }}'>Add a new skill</a></p>
+{% endblock %}
