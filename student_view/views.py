@@ -1,7 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 
-from topic.models import Grade, Skill, Topic
+from topic.models import Skill, Topic
+from grade.models import Grade
 from users.decorators import email_required, new_password_required
 
 
@@ -12,7 +13,7 @@ from users.decorators import email_required, new_password_required
 def student_topics(request):
     if request.user.is_staff:
         return redirect("/")
-    qs = Topic.objects.filter(stage=request.user.your_stage.stage)
+    qs = Topic.objects.filter(stage=request.user.classes.all()[0])
     context = {"topic_list": qs}
     template_name = "student_topics.html"
     return render(request, template_name, context)

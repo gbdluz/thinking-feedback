@@ -2,8 +2,10 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
 
-from classes.models import Stage, YourStage
-from topic.models import Topic, Skill, Grade
+from classes.models import Stage
+from topic.models import Topic, Skill
+from grade.models import Grade
+
 
 # Create your views here.
 @staff_member_required
@@ -11,12 +13,8 @@ def by_student(request):
     stages = Stage.objects.filter(teacher=request.user)
     students = {}
     for stage in stages:
-        temp = YourStage.objects.filter(stage=stage)
-        std = User.objects.filter(your_stage__in=temp)
-        students[stage] = std
+        students[stage] = stage.students.all()
     context = {"students": students, "empty": 0}
-    # context['students'] = students
-    # context['empty'] = 0
     if len(stages) == 0:
         context["empty"] = 1
     template_name = "by_student.html"
@@ -26,7 +24,7 @@ def by_student(request):
 @staff_member_required
 def by_student_pick_topic(request, pk):
     student = User.objects.get(pk=pk)
-    stage = student.your_stage.stage
+    stage = student.classes.all()[0]  #TODO: allow multiple user
     if stage.teacher != request.user:
         return redirect("/")
     qs = Topic.objects.filter(stage=stage)
@@ -38,7 +36,7 @@ def by_student_pick_topic(request, pk):
 @staff_member_required
 def by_student_view(request, pk1, pk2):
     student = User.objects.get(pk=pk1)
-    stage = student.your_stage.stage
+    stage = student.classes.all()[0]
     if stage.teacher != request.user:
         return redirect("/")
     obj = get_object_or_404(Topic, pk=pk2)
@@ -66,7 +64,7 @@ def by_student_view(request, pk1, pk2):
 def by_student_update(request, pk1, pk2):
     obj = get_object_or_404(Topic, pk=pk2)
     student = User.objects.get(pk=pk1)
-    stage = student.your_stage.stage
+    stage = student.classes.all()[0]
     if stage.teacher != request.user:
         return redirect("/")
     skill_list = Skill.objects.filter(topic=obj)
@@ -87,7 +85,7 @@ def by_student_update(request, pk1, pk2):
 @staff_member_required
 def by_student_edit(request, pk1, pk2):
     student = User.objects.get(pk=pk1)
-    stage = student.your_stage.stage
+    stage = student.classes.all()[0]
     if stage.teacher != request.user:
         return redirect("/")
     obj = get_object_or_404(Topic, pk=pk2)
