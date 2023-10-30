@@ -15,7 +15,7 @@
           <td>{{ skill.title }}</td>
           {% for level in levels %}
                   {% if not level %}
-                    <td>Empty</td>
+                    <td></td>
                   {% endif %}
 
                   {% if level and level|stringformat:"s" != "rowspan"%}
