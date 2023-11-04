@@ -3,16 +3,22 @@
 {% block content %}
 <h1> {{ stage.title }} </h1>
 
-<table>
-  <tr>
-    <th>Uczeń</th>
-    <th>Dział</th>
-    <th>Umiejętność</th>
-    <th>_____Podstawowa_____</th>
-    <th>Średniozaawansowana</th>
-    <th>_____Zaawansowana_____</th>
-  </tr>
+<input type="checkbox" id="show-skill-descriptions" name="show-skill-descriptions" value="true" onclick="showSkillDescriptions()">
+<label for="show-skill-descriptions"> Show skill levels descriptions </label>
+
+<table class="compact-table" style="width: 1250px;">
+  <thead>
+    <tr>
+      <th>Uczeń</th>
+      <th>Dział</th>
+      <th style="width: 190px; text-align: center;">Umiejętność</th>
+      <th style="width: 300px; text-align: center;">Podstawowa</th>
+      <th style="width: 300px; text-align: center;">Średniozaawansowana</th>
+      <th style="width: 300px; text-align: center;">Zaawansowana</th>
+    </tr>
+  </thead>
   {% for student in students %}
+    <tbody class="table-container">
     {% for topic, skills in topic_to_skills.items %}
       {% for skill in skills %}
         <tr>
@@ -23,24 +29,31 @@
             <td>
               {% for skill_level in skill.levels.all %}
                 {% if skill_level.level|stringformat:"s" == level|stringformat:"s" %}
-                  <li>
+                  <h6 class="skill-level-description" style="display: none">
                     {{ skill_level.description }}
-                  </li>
-                  <label for="Mark">M:</label>
-                  <select name="mark" id="mark-{{ student.pk }}-{{ skill_level.pk }}">
-                    {% for mark_value, mark_name in marks %}
-                      <option value="{{ mark_value }}">{{ mark_name }}</option>
-                    {% endfor %}
-                  </select>
-                  <label for="Type">T:</label>
-                  <select name="type" id="type-{{ student.pk }}-{{ skill_level.pk }}">
+                  </h6>
+                  <select name="type" id="type-{{ student.pk }}-{{ skill_level.pk }}" style="width: 37px;" title="Type of mark">
                     {% for type_value, type_name in types %}
                       <option value="{{ type_value }}">{{ type_value }}</option>
                     {% endfor %}
                   </select>
-                  <label for="comment-{{ student.pk }}-{{ skill_level.pk }}">C:</label>
-                  <input type="text" name="comment" id="comment-{{ student.pk }}-{{ skill_level.pk }}" size="10">
-                  <button type="submit" class="btn btn-primary" onclick="saveGrade('{{ student.pk }}', '{{ skill_level.pk }}')">+</button>
+                  <input type="text" name="comment" id="comment-{{ student.pk }}-{{ skill_level.pk }}" size="7" title="Comment">
+                  <button type="submit" class="btn btn-primary grade-btn btn-{{ student.pk }}-{{ skill_level.pk }}" data-mark="tick"
+                          id="btn-{{ student.pk }}-{{ skill_level.pk }}-tick" data-del-id="btn-{{ student.pk }}-{{ skill_level.pk }}-delete"
+                          title="{{ skill_level.description }}"
+                          onclick="saveGrade('{{ student.pk }}', '{{ skill_level.pk }}', 'tick', this.id);" >✔</button>
+                  <button type="submit" class="btn btn-primary grade-btn btn-{{ student.pk }}-{{ skill_level.pk }}" data-mark="B"
+                          id="btn-{{ student.pk }}-{{ skill_level.pk }}-B" data-del-id="btn-{{ student.pk }}-{{ skill_level.pk }}-delete"
+                          title="{{ skill_level.description }}"
+                          onclick="saveGrade('{{ student.pk }}', '{{ skill_level.pk }}', 'B', this.id);">B</button>
+                  <button type="submit" class="btn btn-primary grade-btn btn-{{ student.pk }}-{{ skill_level.pk }}" data-mark="cross"
+                          id="btn-{{ student.pk }}-{{ skill_level.pk }}-cross" data-del-id="btn-{{ student.pk }}-{{ skill_level.pk }}-delete"
+                          title="{{ skill_level.description }}"
+                          onclick="saveGrade('{{ student.pk }}', '{{ skill_level.pk }}', 'cross', this.id);">✘</button>
+                  <button type="submit" class="btn btn-primary grade-btn btn-{{ student.pk }}-{{ skill_level.pk }}-delete"
+                          id="btn-{{ student.pk }}-{{ skill_level.pk }}-delete" style="background-color: lightcoral;" disabled
+                          title="{{ skill_level.description }}"
+                          onclick="deleteGrade('{{ student.pk }}', '{{ skill_level.pk }}', this.id);">DEL</button>
                 {% endif %}
               {% endfor %}
             </td>
@@ -48,6 +61,7 @@
         </tr>
       {% endfor %}
     {% endfor %}
+    </tbody>
   {% endfor %}
 </table>
 
@@ -59,14 +73,11 @@
 
 <script type="text/javascript">
 
-var saveGrade = function(student_id, skill_level_id) {
-    console.log(student_id)
-    console.log(skill_level_id)
-
+var saveGrade = function(student_id, skill_level_id, mark, id) {
     var data = new FormData();
     data.append("student", student_id);
     data.append("skill_level", skill_level_id);
-    data.append("value", document.getElementById("mark-"+student_id+"-"+skill_level_id).value);
+    data.append("value", mark);
     data.append("type", document.getElementById("type-"+student_id+"-"+skill_level_id).value);
     data.append("comment", document.getElementById("comment-"+student_id+"-"+skill_level_id).value);
 
@@ -75,18 +86,86 @@ var saveGrade = function(student_id, skill_level_id) {
 
     xhr.addEventListener("readystatechange", function() {
       if(this.readyState === 4) {
-        {#console.log(this.responseText);#}
       }
     });
 
     xhr.open("POST", "http://127.0.0.1:8080/grade/add/");
-    xhr.setRequestHeader("X-CSRFToken", "BT27cq8GZf4QqNFno9GZqBuj2TFp3WXy");
-
+    xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhr.send(data);
 
-    console.log("send");
+    changeAddGradeOnClicks(student_id, skill_level_id, "edit");
+
+    var self = document.getElementById(id)
+    self.style = "background-color: lightgreen;";
+    self.disabled = true;
+
+    document.getElementById(self.getAttribute("data-del-id")).disabled = false;
+    document.getElementById(self.getAttribute("data-del-id")).style = "background-color: red;";
 }
 
+var editGrade = function(student_id, skill_level_id, mark, id) {
+    console.log("Editing mark");
+    {#TODO#}
+
+    changeAddGradeOnClicks(student_id, skill_level_id, "edit");
+
+    var self = document.getElementById(id)
+    self.style = "background-color: lightgreen;";
+    self.disabled = true;
+}
+
+var deleteGrade = function(student_id, skill_level_id, id) {
+    console.log("Deleting mark");
+    {#TODO#}
+
+    changeAddGradeOnClicks(student_id, skill_level_id, "save");
+
+    var self = document.getElementById(id)
+    self.style = "background-color: lightcoral;";
+    self.disabled = true;
+}
+
+var changeAddGradeOnClicks = function (student_id, skill_level_id, edit) {
+    var buttons = document.getElementsByClassName("btn-" + student_id + "-" + skill_level_id);
+    for (var i = 0; i < buttons.length; i++) {
+        buttons.item(i).disabled = false;
+        buttons.item(i).style = "background-color: light-blue;"
+        buttons.item(i).onclick = new Function(
+            edit + "Grade('" + student_id + "', '" + skill_level_id + "', '" +
+            buttons.item(i).getAttribute("data-mark") + "', '" +
+            buttons.item(i).getAttribute("id") + "');"
+        );
+    }
+}
+
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+function showSkillDescriptions() {
+    var checkbox = document.querySelector('#show-skill-descriptions');
+    var elements = document.getElementsByClassName("skill-level-description");
+    for (var i = 0; i < elements.length; i++) {
+        if(checkbox.checked) {
+            elements.item(i).style.display = '';
+        }
+        if(checkbox.checked===false) {
+            elements.item(i).style.display = 'none';
+        }
+    }
+}
 // BS4
 {#$(document).ready(function() {#}
 {#    $("#create-grade").modalForm({#}
