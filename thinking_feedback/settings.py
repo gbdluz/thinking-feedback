@@ -27,6 +27,7 @@ SECRET_KEY = "django-insecure-9-(7mm_chv$l!-0vdz)_-a$*a!0cm#m%nto5y=6tz%4l*_5g3@
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+DEV = True
 
 ALLOWED_HOSTS = ["*"]
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "bootstrap_modal_forms",
+    "config",
     "by_student",
     "classes",
     "grade",
@@ -73,6 +75,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "config.context_processors.dev_processor",
             ],
         },
     },
@@ -84,7 +87,7 @@ WSGI_APPLICATION = "thinking_feedback.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL = os.getenv("DATABASE_URL_DEV") if DEV else os.getenv("DATABASE_URL")
 
 DATABASES = {
     "default": dj_database_url.parse(DATABASE_URL),

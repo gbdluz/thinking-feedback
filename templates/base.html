@@ -68,6 +68,9 @@
   </head>
   <body>
 
+  {% if dev %}
+    <h3 style="color: red"> You are using DEV database - no changes will be permanent </h3>
+  {% endif %}
 
     {% include 'navbar.html' %}
     <div class = 'container'>
