@@ -6,7 +6,15 @@ from topic.models import SkillLevel
 from .forms import TaskModelForm, TaskGeneratorModelForm
 
 from .models import Task, TaskGenerator
-INITIAL_CODE = "def generator():\n    \n    return"
+INITIAL_CODE = """
+tasks = []
+answers = []
+np.random.seed(123)
+for i in range(10):
+    value = np.random.randint(1, 10)
+    tasks.append(f"Oblicz: ${value}$")
+    answers.append(value)
+"""
 
 
 @staff_member_required

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<label>
+  Wygenerowany sprawdzian - wklej do generatora Latex:
+  <textarea rows="16" cols="80">{{ test_str }}</textarea>
+</label>
+
+<label>
+  Wygenerowane odpowiedzi - wklej do generatora Latex:
+  <textarea rows="16" cols="80">{{ answers_str }}</textarea>
+</label>
+
+{% endblock %}

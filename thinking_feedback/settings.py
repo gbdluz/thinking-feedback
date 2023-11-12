@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     "task",
     "topic",
     "users",
+    "exam",
 ]
 
 MIDDLEWARE = [

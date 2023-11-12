@@ -91,6 +91,9 @@ class SkillLevel(models.Model):
     def get_add_generator_url(self):
         return f"/topic/{self.skills.all()[0].topic.pk}/skill_level/{self.pk}/generator/add"
 
+    def __str__(self):
+        return f"{self.level} {self.description} {[skill.title for skill in self.skills.all()]}"
+
 
 # What happens here??
 def delete_students(sender, instance, **kwargs):

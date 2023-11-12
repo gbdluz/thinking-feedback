@@ -14,6 +14,7 @@ class Task(models.Model):
 
 
 class TaskGenerator(models.Model):
+    name = models.CharField(max_length=40)
     code = models.CharField(max_length=1000)
     topic = models.ForeignKey("topic.Topic", on_delete=models.PROTECT)
 

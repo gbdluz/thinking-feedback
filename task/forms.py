@@ -23,7 +23,7 @@ class TaskModelForm(forms.ModelForm):
 class TaskGeneratorModelForm(forms.ModelForm):
     class Meta:
         model = TaskGenerator
-        fields = ["code"]
+        fields = ["name", "code"]
         widgets = {
-            "code": Textarea(attrs={"cols": 80, "rows": 20}),
+            "code": Textarea(attrs={"cols": 80, "rows": 16}),
         }

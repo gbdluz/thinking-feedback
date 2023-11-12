@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Klasa {{ stage }}</h1>
+
+<section>
+  <a href="../generate">Generuj sprawdzian</a>
+  <form method="POST" action=".">{% csrf_token %}
+    <input type="text" hidden name="test-id" value="{{ test.id }}">
+    <div>
+      <label for="test-name"></label>
+      <input type="text" id="test-name" name="test_0_name" value="{{ test.name }}">
+    </div>
+    <div>
+      <label for="test-groups"></label>
+      <input type="number" id="test-groups" name="test_0_groups" value="{{ test.groups }}">
+    </div>
+    <div>
+      <label for="test-date"></label>
+      <input type="date" id="test-date" name="test_0_date" value="{{ test_date }}">
+    </div>
+    <table class="styled-table">
+    <thead>
+      <tr>
+        <th>Umiejętność</th>
+        <th>Podstawowa</th>
+        <th>Średniozaawansowana</th>
+        <th>Zaawansowana</th>
+      </tr>
+    </thead>
+    {% for skill in skills %}
+      <tr>
+        <td>
+          <ul>
+            <li><h4>{{ skill.skill.title }}</h4></li>
+            {% if skill.choice_task %}
+              <li>Edytuj:</li>
+              <ul>
+                <li>
+                  <label for="choice-task-{{ skill.choice_task.id }}">
+                    Strona:
+                  </label>
+                  <input type="number" id="choice-task-{{ skill.choice_task.id }}" name="choice-task_{{ skill.choice_task.id }}_page" value="{{ skill.choice_task.page }}">
+                </li>
+              </ul>
+            {% else %}
+              <li>Utwórz:</li>
+              <ul>
+                <li>
+                  <label for="choice-task-skill-{{ skill.skill.id }}">
+                    Strona:
+                  </label>
+                  <input type="number" id="choice-task-skill-{{ skill.skill.id }}" name="choice-task_skill-{{ skill.skill.id }}_page">
+                </li>
+              </ul>
+            {% endif %}
+          </ul>
+        </td>
+        {% for skill_level in skill.skill_levels %}
+          <td>
+              {% if skill_level.task %}
+                <h6>Edytuj:</h6>
+                <input type="text" hidden name="task_{{ skill_level.task.id }}_skill-id" value="{{ skill.skill.id }}">
+                <section>
+                  <label for="task-{{ skill_level.task.id }}-all">
+                    Użyj generatorów:
+                  </label>
+                  <select id="task-{{ skill_level.task.id }}-all" name="task_{{ skill_level.task.id }}_all">
+                    <option value="all">Wszystkich razem</option>
+                    <option value="one">Jednego losowego</option>
+                  </select>
+                </section>
+                <section>
+                  <label>Generatory</label>
+                  {% for generator in skill_level.generators %}
+                    <div>
+                      <label for="task_{{ skill_level.task.id }}_generator-{{ generator.generator.id }}" title="{{ generator.generator.code }}">
+                        <input id="task_{{ skill_level.task.id }}_generator-{{ generator.generator.id }}" type="checkbox"
+                               name="task_{{ skill_level.task.id }}_generator-{{ generator.generator.id }}" value="{{ generator.generator.id }}"
+                               {% if generator.checked %} checked {% endif %}>
+                        {{ generator.generator.name }}
+                      </label>
+                    </div>
+                  {% endfor %}
+                </section>
+              {% else %}
+                <h6>Utwórz:</h6>
+                <input type="text" hidden name="task_skilllevel-{{ skill_level.skill_level.id }}_skill-id" value="{{ skill.skill.id }}">
+                <section>
+                  <label for="task-skill-level-{{ skill_level.skill_level.id }}-all">
+                    Użyj generatorów:
+                  </label>
+                  <select id="task-skill-level-{{ skill_level.skill_level.id }}-all" name="task_skilllevel-{{ skill_level.skill_level.id }}_all">
+                    <option value="all">Wszystkich razem</option>
+                    <option value="one">Jednego losowego</option>
+                  </select>
+                </section>
+                <section>
+                  <label>Generatory</label>
+                  {% for generator in skill_level.generators %}
+                    <div>
+                      <label for="task_skill-level-{{ skill_level.skill_level.id }}_generator-{{ generator.generator.id }}" title="{{ generator.generator.code }}">
+                        <input id="task_skill-level-{{ skill_level.skill_level.id }}_generator-{{ generator.generator.id }}" type="checkbox"
+                               name="task_skilllevel-{{ skill_level.skill_level.id }}_generator-{{ generator.generator.id }}" value="{{ generator.generator.id }}">
+                        {{ generator.generator.name }}
+                      </label>
+                    </div>
+                  {% endfor %}
+                </section>
+              {% endif %}
+          </td>
+        {% endfor %}
+      </tr>
+    {% endfor %}
+  </table>
+  <input type="submit" value="Zapisz">
+  </form>
+</section>
+
+{% if empty %}
+    Oh! It seems that you need to add classes ('Your classes' section) to be able to add new topics.<br>
+{% endif %}
+
+{% endblock %}
