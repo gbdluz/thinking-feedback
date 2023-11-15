@@ -31,6 +31,9 @@ class Test(models.Model):
     def get_manage_url(self):
         return f"/test/{self.pk}/manage"
 
+    def __str__(self):
+        return self.name
+
 
 class StudentTest(models.Model):
     name = models.CharField(max_length=40)

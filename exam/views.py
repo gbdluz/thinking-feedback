@@ -93,14 +93,15 @@ def manage_test(request, pk: int):
             choice_test_task = ChoiceTestTask.objects.filter(test_id=test.id, skill_id=skill_id).first()
             if choice_test_task:
                 if task_name.startswith('skilllevel'):
-                    skill_level_id = int(task_name.split('-')[1])
-                    skill_level = get_object_or_404(SkillLevel, pk=skill_level_id)
-                    generate_all = True if task_data["all"]=="all" else False
-                    test_task = TestTask(skill_level=skill_level, choice_test_task=choice_test_task, generate_all=generate_all)
-                    test_task.save()
-                    for key, value in task_data.items():
-                        if key.startswith("generator"):
-                            generator = get_object_or_404(TaskGenerator, id=int(value))
+                    generator_ids = [value for key, value in task_data.items() if key.startswith("generator")]
+                    if len(generator_ids) > 0:
+                        skill_level_id = int(task_name.split('-')[1])
+                        skill_level = get_object_or_404(SkillLevel, pk=skill_level_id)
+                        generate_all = True if task_data["all"]=="all" else False
+                        test_task = TestTask(skill_level=skill_level, choice_test_task=choice_test_task, generate_all=generate_all)
+                        test_task.save()
+                        for generator_id in generator_ids:
+                            generator = get_object_or_404(TaskGenerator, id=int(generator_id))
                             test_task.generators.add(generator)
                 else:
                     test_task = get_object_or_404(TestTask, pk=int(task_name))

@@ -121,7 +121,7 @@ class LatexCreator:
         )
 
     def _generate_name_and_surname(self, group_number: int) -> str:
-        name = "\dots\dots\dots\dots\dots\dots\dots\dots\dots\dots\dots\dots\dots"
+        name = "\dots\dots\dots\dots\dots\dots\dots\dots\dots\dots\dots\dots"
         if self.student_test is not None:
             if self.student_test.write_student_name:
                 student: User = self.student_test.students.all().order_by("id")[group_number-1]
@@ -134,18 +134,18 @@ class LatexCreator:
         """ + str(group_number) + "} \n"
 
     def _generate_points_table(self):
-        table = "\\begin{center} \\begin{tabular}{ |c|c|c|c|c| } \n \\hline "
-        table += " Umiejętność & Podstawowy & Śr.-zaaw. & Zaawansowany & Strona \\\\ \n \\hline \n"
+        table = "\\begin{center} \\begin{tabular}{ |p{30mm}|c|c|c|c| } \n \\hline "
+        table += " Umiejętność & Strona & Podstawowy & Śr.-zaaw. & Zaawansowany \\\\ \n \\hline \n"
         if self.test:
             choice_tasks = ChoiceTestTask.objects.filter(test_id=self.test.id).all().order_by("skill__order")
             for choice_task in choice_tasks:
                 row_header = choice_task.skill.title
                 tasks = TestTask.objects.filter(choice_test_task__id=choice_task.pk)
-                table += f"""{row_header} &
+                table += f"""{row_header} & {choice_task.page} &
                             {'' if tasks.filter(skill_level__level=1).first() is not None else 'X'} &
                             {'' if tasks.filter(skill_level__level=2).first() is not None else 'X'} &
-                            {'' if tasks.filter(skill_level__level=3).first() is not None else 'X'} &
-                            {choice_task.page} \\\\ [3ex] \n \\hline \n """
+                            {'' if tasks.filter(skill_level__level=3).first() is not None else 'X'}
+                             \\\\ [3ex] \n \\hline \n """
         else:
             all_tasks = TestTask.objects.filter(student_test_id=self.student_test.id).all().order_by("skill_level_id")
             skill_tasks = defaultdict(list)
@@ -168,6 +168,6 @@ class LatexCreator:
             \\Large	\\textbf{[""" + self.stage_title + """] -- """ + self.name + """ } -- """ + self.date.__str__() + """
         \\end{center}
         \\begin{center}
-            \\Large	Powodzenia Kochani!
+            \\Large	Powodzenia!
         \\end{center}
         """
