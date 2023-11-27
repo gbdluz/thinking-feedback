@@ -13,6 +13,9 @@ class Topic(models.Model):
     teacher = models.ForeignKey(User, on_delete=models.CASCADE)
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
 
+    def get_absolute_url(self):
+        return f"/topic/{self.pk}/"
+
     def get_edit_whole_topic_url(self):
         return f"/topic/{self.pk}"
 

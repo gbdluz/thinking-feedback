@@ -15,7 +15,7 @@
   <label for="{{ form.stage.id_for_label }}">Klasa:</label>
   {{ form.stage }}
 </div>
-{% if stage_chosen %}
+{#{% if stage_chosen %}#}
 
 <div class="fieldWrapper">
   <label for="{{ form.default_mark.id_for_label }}">Domyślna ocena</label>
@@ -66,7 +66,7 @@
   <label for="{{ form.students.id_for_label }}">Uczniowie:</label>
   {{ form.students }}
 </div>
-{% endif %}
+{#{% endif %}#}
 
 <button type = 'submit'>Send</button>
 

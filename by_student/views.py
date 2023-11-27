@@ -50,11 +50,11 @@ def by_student_view(request, pk1, pk2):
     student = User.objects.get(pk=pk1)
     for skill in skill_list:
         grades[skill] = {}
-        for level in (1, 2, 3):
-            grades[skill][level] = []
-            temp = Grade.objects.filter(student=student, skill=skill, level=level)
+        for level in skill.levels.all():
+            grades[skill][level.level] = []
+            temp = Grade.objects.filter(student=student, skill_level=level).order_by("publish_date")
             for grade in temp:
-                grades[skill][level].append(grade)
+                grades[skill][level.level].append(grade)
     context["grades"] = grades
     template_name = "by_student_view.html"
     return render(request, template_name, context)

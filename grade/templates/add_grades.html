@@ -6,6 +6,14 @@
 <input type="checkbox" id="show-skill-descriptions" name="show-skill-descriptions" value="true" onclick="showSkillDescriptions()">
 <label for="show-skill-descriptions"> Show skill levels descriptions </label>
 
+{% if test %}
+  <h2>Oceny z testu {{ test.name }}</h2>
+{% endif %}
+{% if student_test %}
+  <h2>Oceny z poprawy {{ student_test.name }}</h2>
+{% endif %}
+
+
 <table class="compact-table" style="width: 1250px;">
   <thead>
     <tr>
@@ -19,15 +27,15 @@
   </thead>
   {% for student in students %}
     <tbody class="table-container">
-    {% for topic, skills in topic_to_skills.items %}
-      {% for skill in skills %}
+    {% for topic, skills in topic_to_skills_to_skill_levels.items %}
+      {% for skill, skill_levels in skills.items %}
         <tr>
           <td>{{ student.first_name }} {{ student.last_name }}</td>
           <td>{{ topic.title }}</td>
           <td>{{ skill.title }}</td>
           {% for level in levels %}
             <td>
-              {% for skill_level in skill.levels.all %}
+              {% for skill_level in skill_levels %}
                 {% if skill_level.level|stringformat:"s" == level|stringformat:"s" %}
                   <h6 class="skill-level-description" style="display: none">
                     {{ skill_level.description }}
@@ -38,22 +46,58 @@
                     {% endfor %}
                   </select>
                   <input type="text" name="comment" id="comment-{{ student.pk }}-{{ skill_level.pk }}" size="7" title="Comment">
+                  <div hidden id="grade-info-{{ student.pk }}-{{ skill_level.pk }}"
+                      data-student-id="{{ student.pk }}" data-skill_level-id="{{ skill_level.pk }}"
+                       {% if test %}
+                         data-test-id="{{ test.pk }}"
+                       {% endif %}
+                       {% if student_test %}
+                         data-student_test-id="{{ student_test.pk }}"
+                       {% endif %}
+                       {% if grade_type|stringformat:"s" == "topic_students" %}
+                         data-delete-buttons="div-{{ student.pk }}-{{ skill_level.pk }}"
+                       {% endif %}
+                      data-buttons-class="btn-{{ student.pk }}-{{ skill_level.pk }}">
+                    {% if grade_type|stringformat:"s" == "test" or grade_type|stringformat:"s" == "student_test" %}
+                        {% for grade in grades %}
+                          {% if grade.skill_level.pk == skill_level.pk and grade.student.pk == student.pk %}
+                            <div hidden class="grade-info" data-grade-id="{{ grade.pk }}" data-grade-mark="{{ grade.value }}">
+                            </div>
+                          {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                  </div>
                   <button type="submit" class="btn btn-primary grade-btn btn-{{ student.pk }}-{{ skill_level.pk }}" data-mark="tick"
-                          id="btn-{{ student.pk }}-{{ skill_level.pk }}-tick" data-del-id="btn-{{ student.pk }}-{{ skill_level.pk }}-delete"
-                          title="{{ skill_level.description }}"
-                          onclick="saveGrade('{{ student.pk }}', '{{ skill_level.pk }}', 'tick', this.id);" >✔</button>
+                          id="btn-{{ student.pk }}-{{ skill_level.pk }}-tick" title="{{ skill_level.description }}"
+                          data-div-grade-info-id="grade-info-{{ student.pk }}-{{ skill_level.pk }}"
+                          onclick="saveGrade('tick', this.id);" >✔</button>
                   <button type="submit" class="btn btn-primary grade-btn btn-{{ student.pk }}-{{ skill_level.pk }}" data-mark="B"
-                          id="btn-{{ student.pk }}-{{ skill_level.pk }}-B" data-del-id="btn-{{ student.pk }}-{{ skill_level.pk }}-delete"
-                          title="{{ skill_level.description }}"
-                          onclick="saveGrade('{{ student.pk }}', '{{ skill_level.pk }}', 'B', this.id);">B</button>
+                          id="btn-{{ student.pk }}-{{ skill_level.pk }}-B" title="{{ skill_level.description }}"
+                          data-div-grade-info-id="grade-info-{{ student.pk }}-{{ skill_level.pk }}"
+                          onclick="saveGrade('B', this.id);">B</button>
                   <button type="submit" class="btn btn-primary grade-btn btn-{{ student.pk }}-{{ skill_level.pk }}" data-mark="cross"
-                          id="btn-{{ student.pk }}-{{ skill_level.pk }}-cross" data-del-id="btn-{{ student.pk }}-{{ skill_level.pk }}-delete"
-                          title="{{ skill_level.description }}"
-                          onclick="saveGrade('{{ student.pk }}', '{{ skill_level.pk }}', 'cross', this.id);">✘</button>
-                  <button type="submit" class="btn btn-primary grade-btn btn-{{ student.pk }}-{{ skill_level.pk }}-delete"
-                          id="btn-{{ student.pk }}-{{ skill_level.pk }}-delete" style="background-color: lightcoral;" disabled
-                          title="{{ skill_level.description }}"
-                          onclick="deleteGrade('{{ student.pk }}', '{{ skill_level.pk }}', this.id);">DEL</button>
+                          id="btn-{{ student.pk }}-{{ skill_level.pk }}-cross" title="{{ skill_level.description }}"
+                          data-div-grade-info-id="grade-info-{{ student.pk }}-{{ skill_level.pk }}"
+                          onclick="saveGrade('cross', this.id);">✘</button>
+                  {% if grade_type|stringformat:"s" == "test" or grade_type|stringformat:"s" == "student_test" %}
+                    <button type="submit" class="btn btn-primary grade-btn btn-{{ student.pk }}-{{ skill_level.pk }}-delete"
+                            id="btn-{{ student.pk }}-{{ skill_level.pk }}-delete" style="background-color: lightcoral;" disabled
+                            title="{{ skill_level.description }}"
+                            data-div-grade-info-id="grade-info-{{ student.pk }}-{{ skill_level.pk }}"
+                            onclick="deleteTestGrade(this.id);">DEL</button>
+                  {% endif %}
+                  {% if grade_type|stringformat:"s" == "topic_students" %}
+                    <div id="div-{{ student.pk }}-{{ skill_level.pk }}">
+                    {% for grade in grades %}
+                      {% if grade.skill_level.pk == skill_level.pk and grade.student.pk == student.pk %}
+                        <button type="submit" style="background-color: lightcoral;" class="btn btn-primary" data-grade-id="{{ grade.pk }}"
+                                id="btn-{{ student.pk }}-{{ skill_level.pk }}-{{ grade.pk }}-delete"
+                                title="{{ skill_level.description }}" onclick="deleteGrade(this.id, {{ grade.pk }});"> {{ grade.value }}
+                        </button>
+                      {% endif %}
+                    {% endfor %}
+                    </div>
+                  {% endif %}
                 {% endif %}
               {% endfor %}
             </td>
@@ -69,72 +113,162 @@
     Oh no! It seems that you have no skills in this topic currently.<br>
 {% endif %}
 <br>
-<p><a href = '{{ topic.get_add_skill_url }}'>Add a new skill</a></p>
 
 <script type="text/javascript">
 
-var saveGrade = function(student_id, skill_level_id, mark, id) {
+var grade_infos = document.getElementsByClassName('grade-info');
+for (var i = 0; i < grade_infos.length; i++) {
+    var grade_info = grade_infos.item(i);
+    var buttons_class = grade_info.parentNode.getAttribute("data-buttons-class");
+    var mark = grade_info.getAttribute("data-grade-mark");
+    var button_to_disable = document.getElementById(buttons_class + "-" + mark);
+    if (button_to_disable != null) {
+      button_to_disable.style = "background-color: lightgreen;";
+      button_to_disable.disabled = true;
+      var delete_button = document.getElementById(buttons_class + "-delete");
+      delete_button.disabled = false;
+      delete_button.style = "background-color: red;";
+    }
+}
+
+var saveGrade = function(mark, id) {
+    var self = document.getElementById(id);
+    var div = document.getElementById(self.getAttribute("data-div-grade-info-id"));
+    var student_id = div.getAttribute("data-student-id");
+    var skill_level_id = div.getAttribute("data-skill_level-id");
+
+    var grade_id = null
+    if (div.children.length > 0) {
+        grade_id = Number(div.children[0].getAttribute("data-grade-id"));
+    }
+
     var data = new FormData();
     data.append("student", student_id);
     data.append("skill_level", skill_level_id);
     data.append("value", mark);
     data.append("type", document.getElementById("type-"+student_id+"-"+skill_level_id).value);
     data.append("comment", document.getElementById("comment-"+student_id+"-"+skill_level_id).value);
+    if (grade_id != null) {
+      data.append("grade_id", grade_id);
+    }
+    if (div.hasAttribute("data-test-id")) {
+        data.append("test", div.getAttribute("data-test-id"))
+    }
+    if (div.hasAttribute("data-student_test-id")) {
+        data.append("student_test", div.getAttribute("data-student_test-id"))
+    }
 
     var xhr = new XMLHttpRequest();
     xhr.withCredentials = true;
 
     xhr.addEventListener("readystatechange", function() {
-      if(this.readyState === 4) {
+      if(xhr.readyState === XMLHttpRequest.DONE) {
+        var response = JSON.parse(xhr.responseText);
+        var delete_button = document.getElementById(div.getAttribute("data-buttons-class")+"-delete");
+
+        if (delete_button != null) {
+          {#add grades for test or student test#}
+          changeAddGradeOnClicks(div.getAttribute("data-buttons-class"));
+
+          self.style = "background-color: lightgreen;";
+          self.disabled = true;
+
+          delete_button.disabled = false;
+          delete_button.style = "background-color: red;";
+          if (grade_id===null) {
+            var child = document.createElement("div");
+            child.setAttribute("hidden", true);
+            child.classList.add("grade-info");
+            child.setAttribute("data-grade-id", response.grade_id);
+            div.appendChild(child);
+          }
+        }
+        else {
+          {#add grades without any test neither student test#}
+          var delete_div = document.getElementById(div.getAttribute("data-delete-buttons"));
+          var child = document.createElement("button");
+          child.setAttribute("type", "submit");
+          child.classList.add("btn");
+          child.classList.add("btn-primary");
+          child.setAttribute("style", "background-color: lightcoral;")
+          child.setAttribute("data-grade-id", response.grade_id);
+          var id = "btn-" + student_id + "-" + skill_level_id + "-" + response.grade_id + "-delete";
+          child.setAttribute("id", id);
+          child.setAttribute("title", self.title);
+          child.setAttribute("onclick", "deleteGrade(this.id, " + response.grade_id +");");
+          child.innerHTML = mark;
+          delete_div.appendChild(child);
+        }
       }
     });
 
     xhr.open("POST", "http://127.0.0.1:8080/grade/add/");
     xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
     xhr.send(data);
-
-    changeAddGradeOnClicks(student_id, skill_level_id, "edit");
-
-    var self = document.getElementById(id)
-    self.style = "background-color: lightgreen;";
-    self.disabled = true;
-
-    document.getElementById(self.getAttribute("data-del-id")).disabled = false;
-    document.getElementById(self.getAttribute("data-del-id")).style = "background-color: red;";
 }
 
-var editGrade = function(student_id, skill_level_id, mark, id) {
-    console.log("Editing mark");
-    {#TODO#}
+var deleteTestGrade = function(id) {
+    var self = document.getElementById(id);
+    var div = document.getElementById(self.getAttribute("data-div-grade-info-id"));
 
-    changeAddGradeOnClicks(student_id, skill_level_id, "edit");
+    var grade_id = null
+    var grade_id_children = null
+    if (div.children.length > 0) {
+        grade_id = Number(div.children[0].getAttribute("data-grade-id"));
+        grade_id_children = div.children[0];
+    }
 
-    var self = document.getElementById(id)
-    self.style = "background-color: lightgreen;";
-    self.disabled = true;
+    var data = new FormData();
+    if (grade_id != null) {
+      data.append("grade_id", grade_id);
+      var xhr = new XMLHttpRequest();
+      xhr.withCredentials = true;
+
+      xhr.addEventListener("readystatechange", function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+          var response = JSON.parse(xhr.responseText);
+          if (response.success) {
+            changeAddGradeOnClicks(div.getAttribute("data-buttons-class"));
+            self.style = "background-color: lightcoral;";
+            self.disabled = true;
+            div.removeChild(grade_id_children);
+          }
+        }
+      })
+
+      xhr.open("POST", "http://127.0.0.1:8080/grade/delete/");
+      xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+      xhr.send(data);
+    }
 }
 
-var deleteGrade = function(student_id, skill_level_id, id) {
-    console.log("Deleting mark");
-    {#TODO#}
+var deleteGrade = function(id, grade_id) {
+    var self = document.getElementById(id);
 
-    changeAddGradeOnClicks(student_id, skill_level_id, "save");
+    var data = new FormData();
+    data.append("grade_id", grade_id);
+    var xhr = new XMLHttpRequest();
+    xhr.withCredentials = true;
 
-    var self = document.getElementById(id)
-    self.style = "background-color: lightcoral;";
-    self.disabled = true;
+    xhr.addEventListener("readystatechange", function() {
+      if (xhr.readyState === XMLHttpRequest.DONE) {
+        var response = JSON.parse(xhr.responseText);
+        if (response.success) {
+          self.parentNode.removeChild(self);
+        }
+      }
+    })
+
+    xhr.open("POST", "http://127.0.0.1:8080/grade/delete/");
+    xhr.setRequestHeader("X-CSRFToken", getCookie("csrftoken"));
+    xhr.send(data);
 }
 
-var changeAddGradeOnClicks = function (student_id, skill_level_id, edit) {
-    var buttons = document.getElementsByClassName("btn-" + student_id + "-" + skill_level_id);
+var changeAddGradeOnClicks = function (class_name) {
+    var buttons = document.getElementsByClassName(class_name);
     for (var i = 0; i < buttons.length; i++) {
         buttons.item(i).disabled = false;
         buttons.item(i).style = "background-color: light-blue;"
-        buttons.item(i).onclick = new Function(
-            edit + "Grade('" + student_id + "', '" + skill_level_id + "', '" +
-            buttons.item(i).getAttribute("data-mark") + "', '" +
-            buttons.item(i).getAttribute("id") + "');"
-        );
     }
 }
 

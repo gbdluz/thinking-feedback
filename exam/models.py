@@ -45,3 +45,6 @@ class StudentTest(models.Model):
 
     def get_manage_url(self):
         return f"/test/student/{self.pk}/manage"
+
+    def __str__(self):
+        return self.name
