@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Klasa {{ stage }}</h1>
+
+<section>
+  <button title="Pokaż/ukryj" type="button" onclick="spoiler('new-test')">Utwórz nowy test</button>
+  <div id="new-test" style="display:none">
+    <form method='POST' action='./add/'> {% csrf_token %}
+      {{ test_form.as_p }}
+      <button type = 'submit'>Send</button>
+    </form>
+  </div>
+</section>
+
+<section>
+  <button title="Pokaż/ukryj" type="button" onclick="spoiler('new-student-test')">Utwórz nową poprawę</button>
+  <div id="new-student-test" style="display:none">
+    <form method='POST' action='./add/student/'> {% csrf_token %}
+      {{ student_test_form.as_p }}
+      <button type = 'submit'>Send</button>
+    </form>
+  </div>
+</section>
+
+<section>
+  <button title="Pokaż/ukryj" type="button" onclick="spoiler('all-tests')">Testy</button>
+  <div id="all-tests" style="display:none">
+    <ul>
+      {% for test in tests %}
+        <li>
+          <a href="{{ test.get_manage_url }}">{{ test.name }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+<section>
+  <button title="Pokaż/ukryj" type="button" onclick="spoiler('all-student-tests')">Poprawy</button>
+  <div id="all-student-tests" style="display:none">
+    <ul>
+      {% for student_test in student_tests %}
+        <li>
+          <a href="{{ student_test.get_manage_url }}">{{ student_test.name }}</a>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
+
+{% if empty %}
+    Oh! It seems that you need to add classes ('Your classes' section) to be able to add new topics.<br>
+{% endif %}
+
+
+{% endblock %}

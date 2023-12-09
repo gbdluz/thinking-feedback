@@ -1,0 +1,27 @@
+{% with id=widget.attrs.id %}<div{% if id %} id="{{ id }}"{% endif %}{% if widget.attrs.class %} class="{{ widget.attrs.class }}"{% endif %}>
+  {% for group, options, index in widget.optgroups %}
+    {% if group %}
+      <button title="Pokaż/ukryj" type="button" onclick="spoiler('group-{{ group }}-{{ id }}')">{{ group }}</button>
+      <div id="group-{{ group }}-{{ id }}" style="display:none"><label for="input-{{ group }}-{{ id }}"><input id="input-{{ group }}-{{ id }}" type="checkbox" onclick="select_checkboxes('input-{{ group }}-{{ id }}', 'group-{{ group }}-{{ id }}')">Wszystkie</label>
+    {% endif %}
+    {% for option in options %}<div>
+      {% include option.template_name with widget=option %}</div>
+    {% endfor %}
+    {% if group %}
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>{% endwith %}
+
+<script>
+  select_checkboxes = function(self_id, div_id) {
+      var self = document.getElementById(self_id);
+      var container = document.getElementById(div_id);
+      var children = container.getElementsByTagName("div");
+      for (let i = 0; i < children.length; i++) {
+          var input = children.item(i).getElementsByTagName("label").item(0).getElementsByTagName("input").item(0)
+          if(self.checked != input.checked)
+            input.click();
+      }
+  }
+</script>

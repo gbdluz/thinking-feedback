@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<h1>Klasa {{ stage }}</h1>
+
+<section>
+  <a href="../generate">Generuj sprawdzian</a>
+  <form method="POST" action=".">{% csrf_token %}
+    <input type="text" hidden name="test-id" value="{{ test.id }}">
+    <div>
+      <label for="test-name"></label>
+      <input type="text" id="test-name" name="test_0_name" value="{{ test.name }}">
+    </div>
+    <div>
+      <input type="checkbox" id="test-write-student-name" name="test_0_write-student-name" {% if test.write_student_name %} checked {% endif %}>
+      <label for="test-write-student-name">Generuj sprawdziany imienne</label>
+    </div>
+    <div>
+      <label for="test-date"></label>
+      <input type="date" id="test-date" name="test_0_date" value="{{ test_date }}">
+    </div>
+    <table class="styled-table">
+      {% for skill_level in skill_levels %}
+        <tr><td>
+            {% if skill_level.task %}
+              <h6>Edytuj:</h6>
+              <section>
+                <label for="task-{{ skill_level.task.id }}-all">
+                  Użyj generatorów:
+                </label>
+                <select id="task-{{ skill_level.task.id }}-all" name="task_{{ skill_level.task.id }}_all">
+                  <option value="all">Wszystkich razem</option>
+                  <option value="one">Jednego losowego</option>
+                </select>
+              </section>
+              <section>
+                  <label for="task-{{ skill_level.task.id }}-page">
+                    Strona:
+                  </label>
+                  <input type="number" id="task-{{ skill_level.task.id }}-page" name="task_{{ skill_level.task.id }}_page" value="{{ skill_level.task.page }}">
+              </section>
+              <section>
+                <label>Generatory</label>
+                {% for generator in skill_level.generators %}
+                  <div>
+                    <label for="task_{{ skill_level.task.id }}_generator-{{ generator.generator.id }}" title="{{ generator.generator.code }}">
+                      <input id="task_{{ skill_level.task.id }}_generator-{{ generator.generator.id }}" type="checkbox"
+                             name="task_{{ skill_level.task.id }}_generator-{{ generator.generator.id }}" value="{{ generator.generator.id }}"
+                             {% if generator.checked %} checked {% endif %}>
+                      {{ generator.generator.name }}
+                    </label>
+                  </div>
+                {% endfor %}
+              </section>
+            {% else %}
+              <h6>Utwórz:</h6>
+              <section>
+                <label for="task-skill-level-{{ skill_level.skill_level.id }}-all">
+                  Użyj generatorów:
+                </label>
+                <select id="task-skill-level-{{ skill_level.skill_level.id }}-all" name="task_skilllevel-{{ skill_level.skill_level.id }}_all">
+                  <option value="all">Wszystkich razem</option>
+                  <option value="one">Jednego losowego</option>
+                </select>
+              </section>
+              <section>
+                  <label for="task-skill-level-{{ skill_level.skill_level.id }}-page">
+                    Strona:
+                  </label>
+                  <input type="number" id="task-skill-level-{{ skill_level.skill_level.id }}-page" name="task_skilllevel-{{ skill_level.skill_level.id }}_page">
+              </section>
+              <section>
+                <label>Generatory</label>
+                {% for generator in skill_level.generators %}
+                  <div>
+                    <label for="task_skill-level-{{ skill_level.skill_level.id }}_generator-{{ generator.generator.id }}" title="{{ generator.generator.code }}">
+                      <input id="task_skill-level-{{ skill_level.skill_level.id }}_generator-{{ generator.generator.id }}" type="checkbox"
+                             name="task_skilllevel-{{ skill_level.skill_level.id }}_generator-{{ generator.generator.id }}" value="{{ generator.generator.id }}">
+                      {{ generator.generator.name }}
+                    </label>
+                  </div>
+                {% endfor %}
+              </section>
+            {% endif %}
+        </td></tr>
+      {% endfor %}
+  </table>
+  <input type="submit" value="Zapisz">
+  </form>
+</section>
+
+{% if empty %}
+    Oh! It seems that you need to add classes ('Your classes' section) to be able to add new topics.<br>
+{% endif %}
+
+{% endblock %}

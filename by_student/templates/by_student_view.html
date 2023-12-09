@@ -17,9 +17,9 @@
     <table style="width:100%" >
         <tr>
             <th width="25%"></th>
-            <th width="25%">Chill</th>
-            <th width="25%">Medium</th>
-            <th>Challenge</th>
+            <th width="25%">Podstawowy</th>
+            <th width="25%">Średniozaawansowany</th>
+            <th>Zaawansowany</th>
         </tr>
         {% for skill, skill_grades in grades.items %}
         <tr>
@@ -33,7 +33,7 @@
                             {% elif grade.value == 'cross' %}
                                 ☓
                             {% else %}
-                                {{ grade.value }} 
+                                {{ grade.value }}
                             {% endif %}
                         </div>
                     {% endfor %}
@@ -41,7 +41,7 @@
             {% endfor %}
         </tr>
         {% endfor %}
-        
+
     </table>
     <br><br>
 {% endblock %}

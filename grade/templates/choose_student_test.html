@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form method = 'POST' action = '.'>
+    {% csrf_token %}
+
+<div class="fieldWrapper">
+  <label for="{{ form.stage.id_for_label }}">Klasa:</label>
+  {{ form.stage }}
+</div>
+
+<div class="fieldWrapper">
+  <label for="{{ form.student_test.id_for_label }}">Poprawa:</label>
+  {{ form.student_test }}
+</div>
+
+<button type = 'submit'>Wystaw oceny</button>
+
+</form>
+
+{% if empty %}
+    Oh! It seems that you need to add classes ('Your classes' section) to be able to add new topics.<br>
+{% endif %}
+
+{% endblock %}

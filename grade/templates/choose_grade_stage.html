@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<form method = 'POST' action = '.'>
+    {% csrf_token %}
+
+<div class="fieldWrapper">
+  <label for="{{ form.stage.id_for_label }}">Klasa:</label>
+  {{ form.stage }}
+</div>
+<div class="fieldWrapper">
+  <label for="{{ form.add_grade_type.id_for_label }}">Dodaj oceny do:</label>
+  {{ form.add_grade_type }}
+</div>
+
+<button type = 'submit'>Send</button>
+
+</form>
+
+{% if empty %}
+    Oh! It seems that you need to add classes ('Your classes' section) to be able to add new topics.<br>
+{% endif %}
+
+  {#    Change stage submits form#}
+{#<script type="text/javascript">#}
+{#  $(function() {#}
+{#    $('#id_stage').change(function() {#}
+{#        this.form.submit();#}
+{#    });#}
+{#  });#}
+  {#window.onload = function() {#}
+  {#  select = document.getElementById('id_stage');#}
+  {#  select.setAttribute("onchange", 'if(this.value != 0) { this.form.submit(); }');#}
+  {#  #}
+{#</script>#}
+
+{% endblock %}

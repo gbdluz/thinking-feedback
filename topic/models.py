@@ -13,6 +13,9 @@ class Topic(models.Model):
     teacher = models.ForeignKey(User, on_delete=models.CASCADE)
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
 
+    def get_absolute_url(self):
+        return f"/topic/{self.pk}/"
+
     def get_edit_whole_topic_url(self):
         return f"/topic/{self.pk}"
 
@@ -90,6 +93,9 @@ class SkillLevel(models.Model):
 
     def get_add_generator_url(self):
         return f"/topic/{self.skills.all()[0].topic.pk}/skill_level/{self.pk}/generator/add"
+
+    def __str__(self):
+        return f"{self.level} {self.description} {[skill.title for skill in self.skills.all()]}"
 
 
 # What happens here??
