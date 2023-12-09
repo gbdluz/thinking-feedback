@@ -62,6 +62,11 @@ class Skill(models.Model):
     def get_change_skill_order_url(self):
         return f"/topic/{self.topic.pk}/skill/{self.pk}/change_order/"
 
+    def get_latex_title(self) -> str:
+        if self.title.__contains__("%"):
+            return self.title.replace("%", "\\%")
+        return self.title
+
     def __str__(self):
         return f"{self.title} ({self.topic.title})"
 
