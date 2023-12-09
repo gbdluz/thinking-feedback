@@ -3,7 +3,6 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.db import transaction
 
 # Create your views here.
-
 from topic.models import Skill, Topic, SkillLevel
 from classes.models import Stage
 
