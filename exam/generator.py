@@ -16,7 +16,7 @@ GROUP_BEGIN = """\\begin{tcbraster}[raster columns=2, raster rows=2, raster heig
     colbacktitle=white, coltitle=black]
 """
 GROUP_END = "\\end{tcbraster}"
-PAGE_BEGIN = "\\begin{tcolorbox}[title = \\thetcbrasternum. "
+PAGE_BEGIN = "\\begin{tcolorbox}[title = Strona \\thetcbrasternum, "
 PAGE_END = "\\end{tcolorbox}"
 
 
@@ -61,7 +61,7 @@ class LatexCreator:
         return tasks_latex
 
     def _generate_choice_task(self, choice_task: ChoiceTestTask, group_number: int, solution: bool) -> str:
-        task_latex = PAGE_BEGIN + choice_task.skill.title + " -- Wybierz i zrób przynajmniej jedno zadanie]"
+        task_latex = PAGE_BEGIN + choice_task.skill.get_latex_title() + " -- Wybierz i zrób przynajmniej jedno zadanie]"
         tasks = TestTask.objects.filter(choice_test_task__id=choice_task.pk)
         tasks = sorted(tasks, key=lambda t: t.skill_level.level)
         for task in tasks:
@@ -74,9 +74,10 @@ class LatexCreator:
         if test_task.generate_all:
             task_latex += "\\begin{enumerate} \n "
             for generator in test_task.generators.all().order_by("id"):
+                print(generator.name)
                 try:
                     exec(generator.code)
-                    if eval("len(tasks)") < group_number:
+                    if eval("len(tasks)") <= group_number:
                         group_number = group_number % eval("len(tasks)")
                     task_latex += "\\item "
                     if solution:
@@ -94,7 +95,7 @@ class LatexCreator:
             version_from_generator = group_number // n_generators
             try:
                 exec(generators[generator_num].code)
-                if eval("len(tasks)") < version_from_generator:
+                if eval("len(tasks)") <= version_from_generator:
                     version_from_generator = version_from_generator % eval("len(tasks)")
                 if solution:
                     task_latex += str(eval(f"answers[{version_from_generator}]"))
@@ -106,7 +107,7 @@ class LatexCreator:
         return task_latex
 
     def _generate_single_task(self, test_task: TestTask, group_number: int, solution: bool) -> str:
-        task_latex = PAGE_BEGIN + test_task.skill_level.skills.first().title + " ]"
+        task_latex = PAGE_BEGIN + test_task.skill_level.skills.first().get_latex_title() + " ]"
         task_latex += self._generate_task(test_task, group_number, solution)
         task_latex += PAGE_END
         return task_latex
@@ -137,9 +138,9 @@ class LatexCreator:
         table = "\\begin{center} \\begin{tabular}{ |p{30mm}|c|c|c|c| } \n \\hline "
         table += " Umiejętność & Strona & Podstawowy & Śr.-zaaw. & Zaawansowany \\\\ \n \\hline \n"
         if self.test:
-            choice_tasks = ChoiceTestTask.objects.filter(test_id=self.test.id).all().order_by("skill__order")
+            choice_tasks = ChoiceTestTask.objects.filter(test_id=self.test.id).all().order_by("skill__topic_id", "skill__order")
             for choice_task in choice_tasks:
-                row_header = choice_task.skill.title
+                row_header = choice_task.skill.get_latex_title()
                 tasks = TestTask.objects.filter(choice_test_task__id=choice_task.pk)
                 table += f"""{row_header} & {choice_task.page} &
                             {'' if tasks.filter(skill_level__level=1).first() is not None else 'X'} &
@@ -147,10 +148,10 @@ class LatexCreator:
                             {'' if tasks.filter(skill_level__level=3).first() is not None else 'X'}
                              \\\\ [3ex] \n \\hline \n """
         else:
-            all_tasks = TestTask.objects.filter(student_test_id=self.student_test.id).all().order_by("skill_level_id")
+            all_tasks = TestTask.objects.filter(student_test_id=self.student_test.id).all().order_by("skill_level__skills__topic_id", "skill_level__skills__order")
             skill_tasks = defaultdict(list)
             for task in all_tasks:
-                skill_tasks[task.skill_level.skills.first().title].append(task)
+                skill_tasks[task.skill_level.skills.first().get_latex_title()].append(task)
             for skill_title, tasks in skill_tasks.items():
                 levels = [task.skill_level.level for task in tasks]
                 pages = [task.page for task in tasks]
@@ -171,3 +172,20 @@ class LatexCreator:
             \\Large	Powodzenia!
         \\end{center}
         """
+
+
+def pierwiastek(liczba):
+    return "\\sqrt{" + str(liczba) + "}"
+def potega(p, w):
+    return "{" + str(p) + "}^{" + str(w) + "}"
+
+# for kwant, spojnik in zip(['Istnieje taka', 'Każda'], [', która', '']):
+#     for zbior in ["wymierna", "rzeczywista", "naturalna", "niewymierna"]:
+#         for typ in ['nieujemna', 'dodatnia', 'ujemna', 'niedodatnia']:
+# Zapisz zdanie używając symboli matematycznych:
+
+def wyraz(i):
+    return "a_{" + str(i) + "}"
+
+def ulamek(l, m):
+    return "\\frac{" + str(l) + "}{" + str(m) + "}"

@@ -120,6 +120,7 @@ def manage_test(request, pk: int):
                         if not test_task.generators.filter(id=id).first():
                             generator = get_object_or_404(TaskGenerator, id=id)
                             test_task.generators.add(generator)
+        return redirect(f".", request)
 
     test = Test.objects.filter(pk=pk).first()
     stage = test.stage

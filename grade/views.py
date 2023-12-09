@@ -143,13 +143,13 @@ def add_grades(request, stage, students, marks, types, grade_type, skills=None, 
     if skills is not None:
         for skill in skills:
             for level in skill.levels.all():
-                topic_to_skills_to_skill_levels[skill.topic.title][skill.title].append(level)
+                topic_to_skills_to_skill_levels[skill.topic.title][(skill.title, skill.order)].append(level)
     if skill_levels is not None:
         for level in skill_levels:
             skill = Skill.objects.filter(levels__id=level.pk).first()
-            topic_to_skills_to_skill_levels[skill.topic.title][skill.title].append(level)
+            topic_to_skills_to_skill_levels[skill.topic.title][(skill.title, skill.order)].append(level)
     topic_to_skills_to_skill_levels = {
-        topic: {skill: levels for skill, levels in skills.items()}
+        topic: {skill: levels for (skill, order), levels in sorted(skills.items(), key=lambda k: k[0][1])}
         for topic, skills in topic_to_skills_to_skill_levels.items()
     }
     if test is not None:
