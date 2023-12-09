@@ -11,6 +11,7 @@ admin.site.register(Topic)
 admin.site.register(Skill)
 admin.site.unregister(Group)
 
+
 class UserAdmin(admin.ModelAdmin):
     model = User
     fields = [

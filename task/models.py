@@ -13,7 +13,6 @@ class Task(models.Model):
         return f"/topic/{self.topic.pk}/task/{self.pk}/delete"
 
 
-
 class TaskGenerator(models.Model):
     name = models.CharField(max_length=40)
     code = models.CharField(max_length=1000)
@@ -24,4 +23,3 @@ class TaskGenerator(models.Model):
 
     def get_delete_url(self):
         return f"/topic/{self.topic.pk}/generator/{self.pk}/delete"
-

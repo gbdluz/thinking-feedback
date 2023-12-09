@@ -1,4 +1,3 @@
-
 from django.urls import path
 
 from task.views import add_task, update_task, delete_task, add_task_generator, update_task_generator, \
