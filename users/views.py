@@ -11,7 +11,6 @@ from django.contrib.auth.views import (
 )
 from django.shortcuts import redirect, render, get_object_or_404
 from django.urls import reverse_lazy
-
 from classes.models import Stage
 from .decorators import (
     authentication_not_required, email_required,
