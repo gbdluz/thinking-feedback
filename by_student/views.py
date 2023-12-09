@@ -1,6 +1,7 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils.timezone import now
 
 from classes.models import Stage
 from topic.models import Topic, Skill
@@ -21,41 +22,74 @@ def by_student(request):
     return render(request, template_name, context)
 
 
-@staff_member_required
-def by_student_pick_topic(request, pk):
-    student = User.objects.get(pk=pk)
-    stage = student.classes.all()[0]  #TODO: allow multiple user
-    if stage.teacher != request.user:
-        return redirect("/")
-    qs = Topic.objects.filter(stage=stage)
-    context = {"topic_list": qs, "student": student, "stage": stage}
-    template_name = "by_student_pick_topic.html"
-    return render(request, template_name, context)
+convert_grade = lambda grade: "ok" if grade.value == "tick" else "nie" if grade.value == "cross" else grade.value
+
+
+def get_passed_levels(levels):
+    passed_levels = []
+    for level, g in levels.items():
+        convert = lambda val: "✔" if val == "tick" else "✘" if val == "cross" else val
+        g_str = ''.join([convert(grade.value) for grade in g])
+        streaks = g_str.split("✘")
+        passed = False
+        for streak in streaks:
+            if len(streak) == 2 and streak[0] == "✔" and streak[1] == "✔":
+                passed = True
+            if len(streak) >= 3 and streak.__contains__("✔"):
+                passed = True
+        if passed:
+            passed_levels.append(int(level))
+    return passed_levels
 
 
 @staff_member_required
-def by_student_view(request, pk1, pk2):
+def by_student_view(request, pk1):
     student = User.objects.get(pk=pk1)
     stage = student.classes.all()[0]
     if stage.teacher != request.user:
         return redirect("/")
-    obj = get_object_or_404(Topic, pk=pk2)
-    skill_list = Skill.objects.filter(topic=obj)
+    topics = Topic.objects.filter(stage=stage)
+    topic_grades = {}
     context = {
-        "skill_list": skill_list,
         "student": student,
-        "topic": obj.title,
     }
-    grades = {}
-    student = User.objects.get(pk=pk1)
-    for skill in skill_list:
-        grades[skill] = {}
-        for level in skill.levels.all():
-            grades[skill][level.level] = []
-            temp = Grade.objects.filter(student=student, skill_level=level).order_by("publish_date")
-            for grade in temp:
-                grades[skill][level.level].append(grade)
-    context["grades"] = grades
+    table = ""
+    for topic in topics:
+        table += "Dział " + topic.title + ": \n"
+        skill_list = Skill.objects.filter(topic=topic).order_by("order")
+        grades = {}
+        student = User.objects.get(pk=pk1)
+        for skill in skill_list:
+            table += skill.title + ": "
+            grades[skill] = []
+            levels = {}
+            for level in skill.levels.all():
+                levels[level.level] = []
+                temp = Grade.objects.filter(student=student, skill_level=level).order_by("publish_date")
+                for grade in temp:
+                    levels[level.level].append(grade)
+            passed_levels = get_passed_levels(levels)
+            max_passed_level = 0
+            if len(passed_levels) > 0:
+                max_passed_level = max(passed_levels)
+            for level, g in sorted(levels.items(), key=lambda x: x[0]):
+                if int(level) <= max_passed_level:
+                    g.append(Grade(value="(zal)", publish_date=now()))
+                grades[skill].append(g)
+                if len(g) > 0 and g[-1].value == "(zal)":
+                    table += f"(p{level}: ZAL);"
+                else:
+                    table += f"(p{level}: " + ", ".join([convert_grade(grade) for grade in g[:-1]]) + "); "
+            table += "\n"
+            topic_grades[topic.title] = grades
+    table += """Legenda:
+p1 - informacje o podejściach z poziomu pierwszego (odpowiednio 2 i 3 to drugi i trzeci poziom),
+ok - jedno podejście zakończone sukcesem,
+B - jedno podejście z błędem,
+nie - jedno podejście niepoprawne,
+ZAL - umiejętność zaliczona na tym poziomie."""
+    context["grades"] = topic_grades
+    context["table"] = table
     template_name = "by_student_view.html"
     return render(request, template_name, context)
 
@@ -94,7 +128,7 @@ def by_student_edit(request, pk1, pk2):
         "skill_list": skill_list,
         "student": student,
         "topic": obj.title,
-    }  #'slug': slug,
+    }
     grades = {}
     student = User.objects.get(pk=pk1)
     for skill in skill_list:

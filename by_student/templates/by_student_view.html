@@ -13,35 +13,38 @@
 
     </style>
     <h3>{{ student.first_name }} {{ student.last_name }}</h3>
-    <h4>{{ topic }} </h4>
-    <table style="width:100%" >
-        <tr>
-            <th width="25%"></th>
-            <th width="25%">Podstawowy</th>
-            <th width="25%">Średniozaawansowany</th>
-            <th>Zaawansowany</th>
-        </tr>
-        {% for skill, skill_grades in grades.items %}
-        <tr>
-            <td>{{ skill.title }}</td>
-            {% for level, level_grades in skill_grades.items %}
-                <td>
-                    {% for grade in level_grades %}
-                        <div style="float:left; margin:2px" title="{{ grade }}">
-                            {% if grade.value == 'tick' %}
-                                ✓
-                            {% elif grade.value == 'cross' %}
-                                ☓
-                            {% else %}
-                                {{ grade.value }}
-                            {% endif %}
-                        </div>
-                    {% endfor %}
-                </td>
-            {% endfor %}
-        </tr>
-        {% endfor %}
+    {% for topic, topic_grades in grades.items %}
+      <h4>{{ topic }} </h4>
+      <table border=1 style="width:100%" >
+          <tr>
+              <th width="25%"></th>
+              <th width="25%">Podstawowy</th>
+              <th width="25%">Średniozaawansowany</th>
+              <th>Zaawansowany</th>
+          </tr>
+          {% for skill, skill_grades in topic_grades.items %}
+          <tr>
+              <td>{{ skill.title }}</td>
+              {% for level_grades in skill_grades %}
+                  <td>
+                      {% for grade in level_grades %}
+                          <span  title="{{ grade }}">
+                              {% if grade.value == 'tick' %}
+                                  ✓
+                              {% elif grade.value == 'cross' %}
+                                  ☓
+                              {% else %}
+                                  {{ grade.value }}
+                              {% endif %}
+                          </span>
+                      {% endfor %}
+                  </td>
+              {% endfor %}
+          </tr>
+          {% endfor %}
 
-    </table>
+      </table>
+    {% endfor %}
+  <textarea rows="15" cols="100">{{ table }}</textarea>
     <br><br>
 {% endblock %}
