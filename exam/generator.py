@@ -16,7 +16,7 @@ GROUP_BEGIN = """\\begin{tcbraster}[raster columns=2, raster rows=2, raster heig
     colbacktitle=white, coltitle=black]
 """
 GROUP_END = "\\end{tcbraster}"
-PAGE_BEGIN = "\\begin{tcolorbox}[title = Strona \\thetcbrasternum, "
+PAGE_BEGIN = "\\begin{tcolorbox}[title = Strona \\thetcbrasternum "
 PAGE_END = "\\end{tcolorbox}"
 
 
@@ -27,13 +27,14 @@ class LatexCreator:
         if test is None and student_test is None:
             raise Exception("You should provide test or student_test")
         self.groups = self.test.groups if self.test is not None else len(self.student_test.students.all())
+        self.first_group = self.test.group_number if self.test is not None else self.student_test.group_number
         self.name = self.test.name if self.test is not None else self.student_test.name
         self.date = self.test.date if self.test is not None else self.student_test.date
         self.stage_title = self.test.stage.title if self.test is not None else self.student_test.stage.title
 
     def generate_tests(self, solution: bool = False) -> str:
         test_latex = BASE_LATEX_BEGIN
-        for group_number in range(1, self.groups+1):
+        for group_number in range(self.first_group, self.groups+self.first_group):
             test_latex += GROUP_BEGIN
             test_latex += self._generate_heading(group_number)
             test_latex += self._generate_tasks(group_number, solution)
@@ -61,7 +62,7 @@ class LatexCreator:
         return tasks_latex
 
     def _generate_choice_task(self, choice_task: ChoiceTestTask, group_number: int, solution: bool) -> str:
-        task_latex = PAGE_BEGIN + choice_task.skill.get_latex_title() + " -- Wybierz i zrób przynajmniej jedno zadanie]"
+        task_latex = PAGE_BEGIN + choice_task.skill.get_latex_title() + " -- Wybierz i zrób przynajmniej jeden poziom]"
         tasks = TestTask.objects.filter(choice_test_task__id=choice_task.pk)
         tasks = sorted(tasks, key=lambda t: t.skill_level.level)
         for task in tasks:
@@ -125,7 +126,7 @@ class LatexCreator:
         name = "\dots\dots\dots\dots\dots\dots\dots\dots\dots\dots\dots\dots"
         if self.student_test is not None:
             if self.student_test.write_student_name:
-                student: User = self.student_test.students.all().order_by("id")[group_number-1]
+                student: User = self.student_test.students.all().order_by("id")[group_number-self.first_group]
                 name = student.first_name + " " + student.last_name + "\dots\dots\dots\dots"
         return """
         \\lhead
@@ -155,11 +156,11 @@ class LatexCreator:
             for skill_title, tasks in skill_tasks.items():
                 levels = [task.skill_level.level for task in tasks]
                 pages = [task.page for task in tasks]
-                table += f"""{skill_title} &
+                table += f"""{skill_title} & {pages} &
                             {'' if len([lvl for lvl in levels if lvl=="1"])>0 else 'X'} &
                             {'' if len([lvl for lvl in levels if lvl=="2"])>0 else 'X'} &
-                            {'' if len([lvl for lvl in levels if lvl=="3"])>0 else 'X'} &
-                            {pages} \\\\ [3ex] \n \\hline \n """
+                            {'' if len([lvl for lvl in levels if lvl=="3"])>0 else 'X'}
+                            \\\\ [3ex] \n \\hline \n """
         table += " \\end{tabular} \\end{center}"
         return table
 
