@@ -26,6 +26,7 @@ class Test(models.Model):
     stage = models.ForeignKey(Stage, default=1, on_delete=models.SET_DEFAULT)
     skills = models.ManyToManyField(Skill, related_name="tests")
     groups = models.IntegerField(default=2)
+    group_number = models.IntegerField(default=1)
     date = models.DateField()
 
     def get_manage_url(self):
@@ -41,6 +42,7 @@ class StudentTest(models.Model):
     students = models.ManyToManyField(User, related_name="student_tests")
     skill_levels = models.ManyToManyField(SkillLevel, related_name="student_tests")
     date = models.DateField()
+    group_number = models.IntegerField(default=1)
     write_student_name = models.BooleanField(default=True)
 
     def get_manage_url(self):

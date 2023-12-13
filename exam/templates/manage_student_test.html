@@ -20,6 +20,10 @@
       <label for="test-date"></label>
       <input type="date" id="test-date" name="test_0_date" value="{{ test_date }}">
     </div>
+    <div>
+      <label for="test-group_number">Zaczynaj grupy od</label>
+      <input type="number" id="test-group_number" name="test_0_group-number" value="{{ test.group_number }}">
+    </div>
     <table class="styled-table">
       {% for skill_level in skill_levels %}
         <tr><td>

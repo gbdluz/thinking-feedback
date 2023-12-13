@@ -22,7 +22,7 @@ class TestForm(forms.ModelForm):
 
     class Meta:
         model = Test
-        fields = ["name", "stage", "skills", "date"]
+        fields = ["name", "stage", "skills", "date", "group_number"]
 
     def __init__(self, stage, *args, **kwargs):
         super(TestForm, self).__init__(*args, **kwargs)
@@ -47,7 +47,7 @@ class StudentTestForm(forms.ModelForm):
 
     class Meta:
         model = StudentTest
-        fields = ["name", "stage", "students", "skill_levels", "date", "write_student_name"]
+        fields = ["name", "stage", "students", "skill_levels", "date", "write_student_name", "group_number"]
 
     def __init__(self, stage, *args, **kwargs):
         super(StudentTestForm, self).__init__(*args, **kwargs)

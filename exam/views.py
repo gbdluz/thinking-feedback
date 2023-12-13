@@ -76,6 +76,9 @@ def manage_test(request, pk: int):
         if test.date != test_data["date"]:
             test.date = test_data["date"]
             test.save()
+        if test.group_number != test_data["group-number"]:
+            test.group_number = test_data["group-number"]
+            test.save()
         for choice_task_name, choice_task_data in data["choice-task"].items():
             if choice_task_data['page'] != '':
                 if choice_task_name.startswith('skill'):
@@ -205,6 +208,9 @@ def manage_student_test(request, pk: int):
             student_test.save()
         if student_test.date != test_data["date"]:
             student_test.date = test_data["date"]
+            student_test.save()
+        if student_test.group_number != test_data["group-number"]:
+            student_test.group_number = test_data["group-number"]
             student_test.save()
         # TODO students
         for task_name, task_data in data["task"].items():
